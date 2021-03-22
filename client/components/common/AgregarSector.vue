@@ -42,8 +42,9 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
+                  {{sector.ruta_id}}
                   <v-autocomplete
-                    v-model="sector.ruta"
+                    v-model="sector.ruta_id"
                     :items="sectores"
                     label="sector"
                     auto-select-first
@@ -103,7 +104,7 @@ export default {
       sectores:['/'],
       sector: {
         nombre:"",
-        ruta:""
+        ruta_id:""
       },
       token: Cookies.get('token')
     }
@@ -114,27 +115,19 @@ export default {
       this.getSectores()
     },
    async agregarSector(){
-/*       try {
+       try {
          if(this.$refs.form.validate()){
-            await axios.post('equipo', this.item, {
+            await axios.post('sector', this.sector,{
              headers: { Authorization: `Bearer ${this.token}` },
            })
-           .then((resp)=>{
-             if (resp.data.estado) { */
+           .then((resp)=>{ 
                this.alertMsg = `Sector agregado exitosamente`;
                 this.alertType = 'success';
                 this.alertShow = true;
                 this.$refs.form.reset();
                 setTimeout(()=>this.alertShow = false, 3000);
-   /*             this.$emit('click');
-             }
-             else
-             {
-                this.alertMsg = resp.data.message;
-                this.alertType = 'error';
-                this.alertShow = true;
-             }
-              
+                this.dialog = false;
+              this.$emit('reloag');
            })
          }
       } catch (error) {
@@ -142,7 +135,7 @@ export default {
         this.alertMsg = error;
         this.alertType = 'error';
         this.alertShow = true;
-      } */
+      } 
     },
     getSectores(){
       try {

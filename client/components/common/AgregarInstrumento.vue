@@ -55,7 +55,8 @@
                       <v-autocomplete
                       v-model="instrumento.tipo_id"
                       label="Tipo"
-                      :items="Object.keys(instrumentoTipo)"
+                      value="asdasdasd"
+                      :items="instrumentoTipo"
                       :rules="rules"
                       >
                       </v-autocomplete>
@@ -84,22 +85,22 @@
 
                   <v-row>
                     <v-col cols="6">
-                      <v-select
+                      <v-autocomplete
                       v-model="instrumento.unidad_id"
                       label="Unidad"
-                      :items="Object.keys(instrumentoUnidad)"
+                      :items="instrumentoUnidad"
                       :rules="rules"
                       >
-                      </v-select>
+                      </v-autocomplete>
                     </v-col>
                     <v-col cols="6">
-                      <v-select
+                      <v-autocomplete
                       v-model="instrumento.magnitud_id"
                       label="Magnitud"
-                      :items="Object.keys(instrumentoMagnitud)"
+                      :items="instrumentoMagnitud"
                       :rules="rules"
                       >
-                      </v-select>
+                      </v-autocomplete>
                     </v-col>
                   </v-row>
 
@@ -108,7 +109,8 @@
                       <v-text-field
                       v-model="instrumento.rango_de" 
                       label="Rango de"
-                      :rules="rules"
+                      :rules="rulesNum"
+                      type="number"
                       >
                       </v-text-field>
                     </v-col>
@@ -127,7 +129,8 @@
                       <v-text-field 
                       v-model="instrumento.rango_normal_de"
                       label="Rango normal de"
-                      :rules="rules"
+                      :rules="rulesNum"
+                      type="number"
                       >
                       </v-text-field>
                     </v-col>
@@ -196,9 +199,9 @@ export default {
         marca: "",
         modelo: "",
         serie: "",
-        rango_de: null,
-        rango_a: null,
-        rango_normal_de: null,
+        rango_de: 0,
+        rango_a: null ,
+        rango_normal_de: 0,
         rango_normal_a: null,
         resolucion: null,
         tolerancia: null, 
@@ -208,6 +211,7 @@ export default {
         encargado_calibracion: Cookies.get('user_id')
       },
       rules:[ v => !!v || 'Requerido' ],
+      rulesNum:[ v => v > -1 || 'El rango no puede menor a 0' ],
     }
   },
   methods:{
@@ -232,9 +236,9 @@ export default {
    async agregarInstrumento(){
       try {
         if(this.$refs.form.validate()){
-          this.instrumento.tipo_id = this.instrumentoTipo[this.instrumento.tipo_id];
-          this.instrumento.unidad_id = this.instrumentoUnidad[this.instrumento.unidad_id];
-          this.instrumento.magnitud_id = this.instrumentoUnidad[this.instrumento.magnitud_id];
+          //this.instrumento.tipo_id = this.instrumentoTipo.tipo_id;
+          //this.instrumento.unidad_id = this.instrumentoUnidad.unidad_id;
+          //this.instrumento.magnitud_id = this.instrumentoUnidad.magnitud_id;
           console.log('Instrumentoer:', this.instrumento);
           await axios.post('instrumento', this.instrumento ,{
               headers: { Authorization: `Bearer ${this.token}` },
@@ -266,7 +270,8 @@ export default {
           })
           .then((res)=>{
             for (const item of res.data.data) {
-              this.instrumentoTipo[item.nombre] = item.id ;
+              //this.instrumentoTipo[item.nombre] = item.id ;
+              this.instrumentoTipo.push({ text: item.nombre , value: item.id});
             }
             console.log('instrumento Tipo:', this.instrumentoTipo);
           })
@@ -281,7 +286,9 @@ export default {
           })
           .then((res)=>{
             for (const item of res.data.data) {
-              this.instrumentoUnidad[item.nombre] = item.id ;
+              //this.instrumentoUnidad[item.nombre] = item.id ;
+              
+              this.instrumentoUnidad.push({ text: item.nombre , value: item.id});
             }
             console.log('instrumento Unidad:', this.instrumentoUnidad);
           })
@@ -298,7 +305,8 @@ export default {
       })
       .then((res)=>{
         for (const item of res.data.data) {
-          this.instrumentoMagnitud[item.nombre] = item.id ;
+          //this.instrumentoMagnitud[item.nombre] = item.id ;
+           this.instrumentoMagnitud.push({ text: item.nombre , value: item.id});
         }
         console.log('instrumento Magnitud:', this.instrumentoMagnitud);
       })

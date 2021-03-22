@@ -52,11 +52,11 @@
                     <v-col cols="6">
                   <v-text-field
                     :append-icon="show3 ? 'mdi-eye' : 'mdi-eye-off'"
-                    :rules="rules"
                     v-model="usuario.password"
                     :type="show3 ? 'text' : 'password'"
                     label="Constraseña"
                     @click:append="show3 = !show3"
+                    value=""
                   ></v-text-field>
                 </v-col>
                   </v-row>
@@ -66,7 +66,6 @@
                       v-model="usuario.rol"
                       label="Rol"
                       :items="listRol"
-                      :rules="rules"
                       >
                       </v-select>
                       

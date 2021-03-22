@@ -365,11 +365,11 @@
                     hide-default-footer
                     height="420"
                   >
-                    <template v-slot:[`item.desde`]="{ item }">
-                      {{ item.desde.toString().slice(0, 10) }}
+                   <template v-slot:[`item.desde`]="{ item }">
+                    {{formFecha(item.desde)}}
                     </template>
                     <template v-slot:[`item.hasta`]="{ item }">
-                      {{ item.hasta.toString().slice(0, 10) }}
+                      {{ formFecha(item.hasta ) }}
                     </template>
                     <!--                               <template v-slot:[`item.certificado`]={item}>
                                 <agregar-certificado  @certificar="certificar" ref="cert" @click="show"/>
@@ -512,7 +512,7 @@ export default {
     AgregarCertificado,
     AgregarCalibracion,
     CargarTareaCalibracionRealizada,
-    AsignarInstrumento,
+    AsignarInstrumento
   },
   layout: 'equipo',
   data() {
@@ -588,6 +588,15 @@ export default {
     }
   },
   methods: {
+    formFecha(item){
+     
+     if(item){
+       let fecha = item.toString().slice(0, 10)
+       return fecha
+     }
+     return ''
+     
+    },
     getRutas() {
       try {
         const token = Cookies.get('token')
@@ -644,7 +653,7 @@ export default {
           .then((res) => {
             // console.log(res.data.data)
             console.log('resEquipoAsignado:', res.data.data)
-            this.equipoAsignado = res.data[0].data
+            this.equipoAsignado = res.data.data
           })
       } catch (error) {
         console.log(error)

@@ -49,7 +49,7 @@
                 </div>
                 <v-divider></v-divider>
               </v-col>
-
+              
               </v-col>
                     <v-col cols="6">
                       <v-text-field 
@@ -176,7 +176,7 @@
                       <v-alert
                         dense
                         text
-                        :type="alertType"
+                        :type="alerType"
                       >
                         {{alertMsg}}
                       </v-alert>
@@ -191,7 +191,7 @@
               <v-btn color="error" text @click="hide">
                 Cancelar
               </v-btn>
-              <v-btn v-if="manual" color="primary" text @click="editarEquipo(equipoActualizado)">
+              <v-btn v-if="manual" color="primary" text @click="asignar()">
                 Asignar Instrumento
               </v-btn>
               <v-btn v-if="!manual" color="primary" text @click="agregarInstrumento">
@@ -224,7 +224,7 @@ export default {
       token: Cookies.get('token'),
       dialog: false,
       alertMsg:"",
-      alertType:"",
+      alerType:"",
       alertShow:false,
       instrumentosTipo:[],
       instrumentoUnidad:[],
@@ -307,31 +307,28 @@ export default {
       this.$refs.form.reset();
     }
   },
-   async agregarInstrumento(){
+   async asignar(){
       try {
-        if(this.$refs.form.validate()){
-       // let indexTipo = this.instrumentosTipo.findIndex(p => p.nombre == this.instrumento.tipo_id);
-       // let indexUnidad = this.instrumentoUnidad.findIndex(p => p.nombre == this.instrumento.unidad_id);
-       // let indexMagnitud = this.instrumentoMagnitud.findIndex(p => p.nombre == this.instrumento.magnitud_id);
-       // this.instrumento.tipo_id = this.instrumentosTipo[indexTipo].id;
-       // this.instrumento.unidad_id = this.instrumentoUnidad[indexUnidad].id;
-       // this.instrumento.magnitud_id = this.instrumentoMagnitud[indexMagnitud].id;
-        await axios.post('instrumento', this.instrumento ,{
+        const id = this.$route.params.id
+        console.log(id)
+        await axios.put(`AsignadoNewInstrumento/${id}`, {"instrumento_id" : this.instrumento.id},{
             headers: { Authorization: `Bearer ${this.token}` },
           })
           .then((res)=>{
-            console.log('Instrumento nuevo:',res.data.data.id);
-            let id = res.data.data.id;
+            this.alertMsg = 'Intrumento asignado correctamente'
+              this.alerType = 'success'
+              this.alertShow = true
+            //this.dialog = false
+           // let id = res.data.data.id;
             //Llenamos los datos del equipo actualizando el id
-            this.equipoActualizado.instrumento_id = id
-            this.equipoActualizado.tag = this.equipo.tag
-            this.equipoActualizado.serie_requerido = this.equipo.serie_requerido
-            this.equipoActualizado.instrumento_serie = this.equipo.instrumento_serie
-            this.equipoActualizado.serie_requerido = this.equipo.serie_requerido
-            this.equipoActualizado.descripcion = this.equipo.descripcion
-            this.editarEquipo(this.equipoActualizado);
-          })
-      } 
+           // this.equipoActualizado.instrumento_id = id
+           // this.equipoActualizado.tag = this.equipo.tag
+            //this.equipoActualizado.serie_requerido = this.equipo.serie_requerido
+           // this.equipoActualizado.instrumento_serie = this.equipo.instrumento_serie
+            //this.equipoActualizado.serie_requerido = this.equipo.serie_requerido
+            //this.equipoActualizado.descripcion = this.equipo.descripcion
+         //   this.editarEquipo(this.equipoActualizado);
+          }) 
       } catch (error) {
         console.log(error)
         this.alertMsg = "Hubo un error al processar tu solicitud"
