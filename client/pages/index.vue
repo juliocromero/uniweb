@@ -21,8 +21,8 @@
               style="cursor: pointer"
             >
               <template v-slot:append="{item}">
-                <div>
-               <v-icon @click="eliminarSector(item)" class="borrar">delete_forever</v-icon>
+                <div class="delete-sector">
+               <v-icon @click="DeleteSector(item)" class="borrar">delete_forever</v-icon>
                 </div>
               </template>
             </v-treeview>
@@ -120,7 +120,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <eliminar-sector :sectorModal="sectorDeleteModal" />
+      <eliminar-sector :sectorModal="sectorDeleteModal" :sector="sectorDelete" @input="closeModal" @deleteOk="deleteOkSector"/>
     </v-container>
   </div>
 </template>
@@ -202,9 +202,16 @@ export default {
     },
   },
   methods: {
-    eliminarSector(item){
+    deleteOkSector(){
+      this.fillItems()
+    },
+    closeModal() {
+      this.sectorDeleteModal = false
+    },
+    DeleteSector(item){
       this.sectorDelete = item,
       this.sectorDeleteModal=true
+      console.log(item)
     },
     reloag() {
       this.fillItems()
@@ -369,5 +376,8 @@ a {
 .borrar:hover{
   color: red;
 
+}
+.delete-sector{
+  z-index: 20;
 }
 </style>
