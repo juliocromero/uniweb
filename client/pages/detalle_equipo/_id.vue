@@ -426,7 +426,7 @@
                 </v-card>
               </v-col>
               <v-col cols="12" sm="6" class="mt-2">
-                <div class="overline">Tareas de Calibración Realizadas</div>
+                <div class="overline">CERTIFICADOS</div>
                 <v-divider></v-divider>
                 <v-col>
                   <filtro />
@@ -651,7 +651,6 @@ export default {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => {
-            // console.log(res.data.data)
             console.log('resEquipoAsignado:', res.data.data)
             this.equipoAsignado = res.data.data
           })
@@ -689,7 +688,7 @@ export default {
             download(response.data, nombreArchivo, content)
           })
       } catch (error) {
-        console.log(error)
+        alert(await error.response.data.text())
       }
     },
     show(item) {

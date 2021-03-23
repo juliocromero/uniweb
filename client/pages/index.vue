@@ -49,6 +49,7 @@
               :server-items-length="totalTableItems"
               :loading="loading"
               multi-sort
+              no-data-text="Sin datos"
               class="elevation-1"
             >
               <template v-slot:top>
@@ -259,19 +260,17 @@ export default {
     },
     async downloadUltCert(id) {
       try {
-        await axios
-          .get('download/lastcert', {
-            headers: { Authorization: `Bearer ${this.token}` },
-            responseType: 'blob',
-            params: { id },
-          })
-          .then((response) => {
-            console.log(response.data)
-            const content = response.headers['content-type']
+        await axios.get('download/lastcert',{
+          headers: { Authorization: `Bearer ${this.token}`},
+          responseType: 'blob',
+          params: { id }
+        }).then(response => {
+            const content = response.headers['content-type'];
             download(response.data, 'ultimo.pdf', content)
-          })
+        })
+
       } catch (error) {
-        console.log(error)
+        alert(await error.response.data.text())
       }
     },
     async filtrarTabla(id) {
