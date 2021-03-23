@@ -1,93 +1,107 @@
 <template>
   <v-container>
-
-            <v-row style="background:#F9F9F9">
-              <v-col cols="12" md="4">
-                <v-menu
-                  ref="menu1"
-                  v-model="menu1"
-                  :close-on-content-click="true"        
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="date1"
-                      label="Desde"
-                      prepend-inner-icon="mdi-calendar"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                      hide-details
-                      outlined
-                      dense
-                      color="primary"
-                      background-color="white"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker v-model="date1" no-title scrollable>
+    <v-row style="background:#F9F9F9">
+      <v-col cols="12" md="4">
+        <v-menu
+          ref="menu1"
+          v-model="menu1"
+          :close-on-content-click="true"        
+          transition="scale-transition"
+          offset-y
+          width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="date1"
+              label="Desde"
+              prepend-inner-icon="mdi-calendar"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              hide-details
+              outlined
+              dense
+              color="primary"
+              background-color="white"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="date1" no-title scrollable>
 <!--                     <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="menu1 = false">
-                      Cancel
-                    </v-btn>
-                    <v-btn text color="primary" @click="$refs.menu1.save(date1)">
-                      OK
-                    </v-btn> -->
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
+            <v-btn text color="primary" @click="menu1 = false">
+              Cancel
+            </v-btn>
+            <v-btn text color="primary" @click="$refs.menu1.save(date1)">
+              OK
+            </v-btn> -->
+          </v-date-picker>
+        </v-menu>
+      </v-col>
 
-              <v-col cols="12" md="4">
-                <v-menu
-                  ref="menu2"
-                  v-model="menu2"
-                   class="picker"
-                  :close-on-content-click="true"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="date2"
-                      label="Hasta"
-                      prepend-inner-icon="mdi-calendar"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                      hide-details
-                      outlined
-                      dense
-                      color="primary"
-                      background-color="white"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker v-model="date2" no-title scrollable>
+      <v-col cols="12" md="4">
+        <v-menu
+          ref="menu2"
+          v-model="menu2"
+            class="picker"
+          :close-on-content-click="true"
+          transition="scale-transition"
+          offset-y
+          width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="date2"
+              label="Hasta"
+              prepend-inner-icon="mdi-calendar"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              hide-details
+              outlined
+              dense
+              color="primary"
+              background-color="white"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="date2" no-title scrollable>
 <!--                     <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="menu2 = false">
-                      Cancel
-                    </v-btn>
-                    <v-btn text color="primary" @click="$refs.menu2.save(date2)">
-                      OK
-                    </v-btn> -->
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
+            <v-btn text color="primary" @click="menu2 = false">
+              Cancel
+            </v-btn>
+            <v-btn text color="primary" @click="$refs.menu2.save(date2)">
+              OK
+            </v-btn> -->
+          </v-date-picker>
+        </v-menu>
+      </v-col>
 
-              <v-col cols="12" md="4" class="d-flex justify-end align-center"> 
-                <v-btn color="grey darken-1" outlined height="40" @click="filtrar">
-                    <v-icon>refresh</v-icon>
-                    Aplicar Filtro
-                </v-btn>
-              </v-col>
-            </v-row>
+      <v-col cols="12" md="4" class="d-flex justify-end" v-if="!home" > 
+        <v-btn color="grey darken-1" outlined height="40" width="40px" @click="filtrar">
+          <div class="text-button-filter">
+            <v-icon>filter_list</v-icon>
+          </div>
+        </v-btn>
+      </v-col>
+      <v-col cols="12" md="4" class="" v-if="home" > 
+        <v-btn color="grey darken-1" outlined height="40" width="100%" @click="filtrar">
+          <div class="d-flex align-center">
+            <v-icon>refresh</v-icon>
+            <div>Aplicar Filtro</div>
+          </div>
+        </v-btn>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import moment from 'moment'
 export default {
+  props:{
+    home: {
+      type: Boolean,
+      default: false
+    }
+  },
   middleware: 'NOAUTH',
   layout: 'custom',
   data: () => ({
@@ -100,6 +114,11 @@ export default {
   created() {
     this.date1="";
     this.date2="";
+  },
+  computed:{
+    filtro(){
+      return this.home
+    }
   },
   methods: {
     click(){
@@ -120,5 +139,11 @@ export default {
 .panel-filtro {
   height: 80px;
   margin-top: 40px;
+}
+.text-button-filter{
+      width: 100%;
+    white-space: initial;
+    text-overflow: ellipsis;
+    overflow: inherit;
 }
 </style>

@@ -37,7 +37,7 @@
             <v-divider></v-divider>
             <v-row>
               <v-col>
-                <filtro @click="filterByDate" ref="Filtro" />
+                <filtro @click="filterByDate" ref="Filtro" :home="true" />
                 <v-divider></v-divider>
               </v-col>
             </v-row>
@@ -210,8 +210,7 @@ export default {
     },
     DeleteSector(item){
       this.sectorDelete = item,
-      this.sectorDeleteModal=true
-      console.log(item)
+      this.sectorDeleteModal = true
     },
     reloag() {
       this.fillItems()
