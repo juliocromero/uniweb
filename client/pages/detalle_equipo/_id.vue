@@ -430,13 +430,12 @@
                 <v-divider></v-divider>
                 <v-col>
                   <filtro />
-                  <div style="margin-left: 650px">
-                  <v-btn
-                  text
-                  color="error"
-                  @click="limpiarFiltros"
-                  class="mr-3 mb-2 "
-                >
+                  <div width="100%" class="d-flex justify-end">
+                    <v-btn
+                    text
+                    color="error"
+                    @click="limpiarFiltros"
+                  >
                   Limpiar Filtros
                 </v-btn>
                   </div>
@@ -453,8 +452,8 @@
                   <v-data-table
                     :headers="headersTareasRealizadas"
                     :items="tareasRealizadas"
-                    hide-default-footer
-                    height="420"
+                    :items-per-page="5"
+                    height="360"
                   >
                     <template v-slot:[`item.certificado`]="{ item }">
                       <v-tooltip bottom>
