@@ -81,7 +81,6 @@
                   <v-tooltip right>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
-                        fab
                         small
                         depressed
                         class="tag"
@@ -155,7 +154,7 @@ export default {
   },
   data: () => ({
     sectorDelete: [],
-   sectorDeleteModal: false,
+    sectorDeleteModal: false,
     token: Cookies.get('token'),
     benched: 0,
     items: [],

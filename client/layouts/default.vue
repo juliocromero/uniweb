@@ -39,7 +39,7 @@
       <!--<v-btn dark icon><v-icon  @click.stop="drawer = !drawer">list</v-icon></v-btn>-->
       
       <v-spacer />
-
+<div style="margin-right: 10px; color: white">{{userName}} [{{userEmpresa}}]</div>
 <v-menu bottom left>
         <template v-slot:activator="{ on, attrs }">
           <v-btn dark icon v-bind="attrs" v-on="on">
@@ -78,6 +78,7 @@
 <script>
 import { mapMutations } from "vuex";
 import password from "@/components/cambiarPassword";
+import Cookies from 'js-cookie'
 
 export default {
   components:{
@@ -88,6 +89,9 @@ export default {
       clipped: true,
       drawer: false,
       fixed: false,
+      userName: Cookies.get('user_name'),
+      userRol: Cookies.get('user_rol'),
+      userEmpresa: Cookies.get('user'),
       items: [
         {
           icon: 'mdi-apps',

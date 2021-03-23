@@ -55,7 +55,6 @@
                       <v-autocomplete
                       v-model="instrumento.tipo_id"
                       label="Tipo"
-                      value="asdasdasd"
                       :items="instrumentoTipo"
                       :rules="rules"
                       >
@@ -143,6 +142,18 @@
                       </v-text-field>
                     </v-col>
                   </v-row>
+
+                  <v-row>
+                    <v-col cols="6">
+                      <v-autocomplete
+                      v-model="instrumento.encargado_calibracion"
+                      label="Encargado"
+                      :items="listEmpresas"
+                      :rules="rules"
+                      >
+                      </v-autocomplete>
+                    </v-col>
+                  </v-row>
                   <!-- Modal status http request -->
                   <v-row v-if="alertShow">
                     <v-col cols="12" class="px-0">
@@ -195,6 +206,7 @@ export default {
       instrumentoTipo:[],
       instrumentoUnidad:[],
       instrumentoMagnitud:[],
+      listEmpresas:[],
       instrumento:{
         marca: "",
         modelo: "",
@@ -208,7 +220,8 @@ export default {
         tipo_id: null,
         unidad_id: null,
         magnitud_id: null,
-        encargado_calibracion: Cookies.get('user_id')
+        is_patron: false,
+        encargado_calibracion: null
       },
       rules:[ v => !!v || 'Requerido' ],
       rulesNum:[ v => v > -1 || 'El rango no puede menor a 0' ],
@@ -229,16 +242,14 @@ export default {
         tipo_id: null,
         unidad_id: null,
         magnitud_id: null,
-        encargado_calibracion: Cookies.get('user_id')
+        is_patron: false,
+        encargado_calibracion: null
       }
       this.instrumento = instrumentoRefresh
     },
    async agregarInstrumento(){
       try {
         if(this.$refs.form.validate()){
-          //this.instrumento.tipo_id = this.instrumentoTipo.tipo_id;
-          //this.instrumento.unidad_id = this.instrumentoUnidad.unidad_id;
-          //this.instrumento.magnitud_id = this.instrumentoUnidad.magnitud_id;
           console.log('Instrumentoer:', this.instrumento);
           await axios.post('instrumento', this.instrumento ,{
               headers: { Authorization: `Bearer ${this.token}` },
@@ -270,8 +281,7 @@ export default {
           })
           .then((res)=>{
             for (const item of res.data.data) {
-              //this.instrumentoTipo[item.nombre] = item.id ;
-              this.instrumentoTipo.push({ text: item.nombre , value: item.id});
+              this.instrumentoTipo.push({ text:item.nombre , value:item.id});
             }
             console.log('instrumento Tipo:', this.instrumentoTipo);
           })
@@ -286,8 +296,6 @@ export default {
           })
           .then((res)=>{
             for (const item of res.data.data) {
-              //this.instrumentoUnidad[item.nombre] = item.id ;
-              
               this.instrumentoUnidad.push({ text: item.nombre , value: item.id});
             }
             console.log('instrumento Unidad:', this.instrumentoUnidad);
@@ -305,10 +313,26 @@ export default {
       })
       .then((res)=>{
         for (const item of res.data.data) {
-          //this.instrumentoMagnitud[item.nombre] = item.id ;
            this.instrumentoMagnitud.push({ text: item.nombre , value: item.id});
         }
         console.log('instrumento Magnitud:', this.instrumentoMagnitud);
+      })
+
+      } catch (error) {
+        console.log(error)
+      }
+
+  },
+
+  getEmpresas(){
+    try {
+      axios.get('getempresas', {
+        headers: { Authorization: `Bearer ${this.token}` },
+      })
+      .then((res)=>{
+        for (const item of res.data) {
+           this.listEmpresas.push({ text: item.empresa , value: item.id});
+        }
       })
 
       } catch (error) {
@@ -321,6 +345,7 @@ export default {
     this.getInstrumentoTipo();
     this.getUnidad();
     this.getMagnitud();
+    this.getEmpresas();
   }
 }
 </script>

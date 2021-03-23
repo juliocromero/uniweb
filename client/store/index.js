@@ -29,12 +29,16 @@ export const mutations = {
     state.auth = false;
     Cookies.remove('token');
     Cookies.remove('user');
-    Cookies.remove('user_id')
+    Cookies.remove('user_id');
+    Cookies.remove('user_rol');
+    Cookies.remove('user_name');
     this.$router.push('/login');
   },
   async setUser(state, payload){
-    Cookies.set('user', payload.empresa)
-    Cookies.set('user_id', payload.id)
+    Cookies.set('user', payload.empresa);
+    Cookies.set('user_id', payload.id);
+    Cookies.set('user_rol', payload.rol);
+    Cookies.set('user_name', payload.nombre);
   },
   toggleDialogPassword(state, payload){
     state.dialogPassword = payload

@@ -5,7 +5,7 @@
         <v-col>
           <v-card>
             <v-card-title style="box-shadow: 1px 2px 4px #888888">
-              Instrumentos
+              Instrumentos patrón
             </v-card-title>
 
             <v-divider></v-divider>
@@ -32,13 +32,32 @@
 
                   <v-spacer></v-spacer>
 
-                  <agregar-instrumento @click="getInstrumentos" :intrumento='intrumentoRefresh'/>
+                  <agregar-instrumento-patron @click="getInstrumentos" :intrumento='intrumentoRefresh'/>
                 </v-toolbar>
+              </template>
+
+              <template v-slot:[`item.serie`]="{ item }">
+                <nuxt-link :to="`detalle_patron/${item.id}`" :exact="true">
+                  <v-tooltip right>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        small
+                        depressed
+                        class="serie"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        {{ item.serie }}
+                      </v-btn>
+                    </template>
+                    <span>Ver Detalle</span>
+                  </v-tooltip>
+                </nuxt-link>
               </template>
 
               <template v-slot:[`item.acciones`]="{ item }">
                 <v-row class="d-flex justify-center">
-                  <editar-instrumento
+                  <editar-instrumento-patron
                     :id="item.id"
                     class="mr-2"
                     @click="getInstrumentos"
@@ -59,19 +78,19 @@
 
 <script>
 import Filtro from '@/components/public/Filtro';
-import EditarInstrumento from "~/components/common/EditarInstrumento.vue";
+import EditarInstrumentoPatron from "~/components/common/EditarInstrumentoPatron.vue";
 import EliminarInstrumento from "~/components/common/EliminarInstrumento.vue";
 import axios from '~/plugins/axios'
 import Cookies from 'js-cookie'
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
-import AgregarInstrumento from "~/components/common/AgregarInstrumento.vue";
+import AgregarInstrumentoPatron from "~/components/common/AgregarInstrumentoPatron.vue";
 export default {
   middleware: 'NOAUTH',
   components: {
     Filtro,
-    EditarInstrumento,
     EliminarInstrumento,
-    AgregarInstrumento
+    AgregarInstrumentoPatron,
+    EditarInstrumentoPatron
   },
   data: () => ({
        intrumentoRefresh:{
@@ -87,12 +106,14 @@ export default {
         tipo_id: null,
         unidad_id: null,
         magnitud_id: null,
+        is_patron: true,
         encargado_calibracion: Cookies.get('user_id')
       },
     desde: null,
     hasta: null,
     instrumento_id:null,
     token: Cookies.get('token'),
+    userRol: Cookies.get('user_rol'),
     benched: 0,
     items: [],
     itemsSelected: [],
@@ -107,7 +128,6 @@ export default {
     editedIndex: -1,
    
     headers: [
-      { text: 'Equipo', value: 'tag', align: 'start' },
       { text: 'Serie', value: 'serie', align: 'center' },
       { text: 'Marca', value: 'marca', align: 'center' },
       { text: 'Modelo', value: 'modelo', align: 'center' },
@@ -134,7 +154,7 @@ export default {
         this.loading = true;
         await axios
           .get('instrumentos', {
-            headers: { Authorization: `Bearer ${this.token}`} , params:{ desde: this.desde, hasta: this.hasta, options: this.options, buscar: this.txtBuscar } ,
+            headers: { Authorization: `Bearer ${this.token}`} , params:{ desde: this.desde, hasta: this.hasta, options: this.options, buscar: this.txtBuscar, isPatron: true } ,
           })
           .then((res) => {
             this.totalTableItems = res.data.total;
@@ -176,4 +196,5 @@ export default {
 </script>
 
 <style>
+
 </style>

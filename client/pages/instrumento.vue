@@ -87,6 +87,7 @@ export default {
         tipo_id: null,
         unidad_id: null,
         magnitud_id: null,
+        is_patron: false,
         encargado_calibracion: Cookies.get('user_id')
       },
     desde: null,

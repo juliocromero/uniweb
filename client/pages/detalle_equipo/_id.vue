@@ -347,9 +347,6 @@
                     <div class="overline">Asignaciones</div>
                   </v-col>
                   <v-spacer></v-spacer>
-                  <v-col cols="2 d-flex justify-end pt-2">
-                    <!--    <agregar-calibracion :instrumento="item"/>-->
-                  </v-col>
                 </v-row>
                 <v-divider></v-divider>
                 <v-card
@@ -365,18 +362,7 @@
                     hide-default-footer
                     height="420"
                   >
-                   <template v-slot:[`item.desde`]="{ item }">
-                    {{formFecha(item.desde)}}
-                    </template>
-                    <template v-slot:[`item.hasta`]="{ item }">
-                      {{ formFecha(item.hasta ) }}
-                    </template>
-                    <!--                               <template v-slot:[`item.certificado`]={item}>
-                                <agregar-certificado  @certificar="certificar" ref="cert" @click="show"/>
-                                <v-btn icon fab small :color="item.certificado ? 'success' : 'gray'" @click="show(item)"><v-icon>verified</v-icon></v-btn>
-                              </template> -->
                   </v-data-table>
-                  {{ items }}
                 </v-card>
               </v-col>
             </v-row>
@@ -392,7 +378,7 @@
                 <v-row>
                   <v-col class="d-flex pr-1">
                     <div class="overline" style="padding-top: 8px">
-                      Tareas de Calibracion
+                      Tareas de Calibración
                     </div>
                     <agregar-calibracion
                       :instrumento="item"
@@ -429,7 +415,7 @@
                 <div class="overline">CERTIFICADOS</div>
                 <v-divider></v-divider>
                 <v-col>
-                  <filtro />
+                  <filtro @click="filterByDate" ref="Filtro"/>
                   <div width="100%" class="d-flex justify-end">
                     <v-btn
                     text
@@ -450,9 +436,12 @@
                   class="mt-2"
                 >
                   <v-data-table
-                    :headers="headersTareasRealizadas"
+                    :headers="headersCertificados"
                     :items="tareasRealizadas"
-                    :items-per-page="5"
+                    :options.sync="optionsCertificados"
+                    :server-items-length="totalCertificados"
+                    :loading="loadingCertificados"
+                    no-data-text="Sin datos"
                     height="360"
                   >
                     <template v-slot:[`item.certificado`]="{ item }">
@@ -518,6 +507,8 @@ export default {
     return {
       paramsId: null,
       equipo: [],
+      desde: null,
+      hasta: null,
       equipoAsignado: [],
       listRutas: [],
       item: {
@@ -559,11 +550,12 @@ export default {
         { text: 'Desde', value: 'desde' },
         { text: 'Hasta', value: 'hasta' },
       ],
-      headersTareasRealizadas: [
+      headersCertificados: [
         { text: 'Tarea', align: 'start', value: 'Num_tarea' },
         { text: 'Instrumento', value: 'intrumento' },
         { text: ' Fecha Realización', value: 'fecha' },
         { text: 'Encargado', value: 'realizo' },
+        { text: 'Patrón', value: 'patron' },
         { text: 'Certificado', align: 'center', value: 'certificado' },
       ],
       headersTareasCalibracion: [
@@ -584,6 +576,9 @@ export default {
       ],
       tareasCalibracion: [],
       tareasRealizadas: [],
+      optionsCertificados: {},
+      totalCertificados: 0,
+      loadingCertificados: false
     }
   },
   methods: {
@@ -622,7 +617,7 @@ export default {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => {
-            //console.log('res:',res.data.data[0].detalleEquipos )
+
             this.item = res.data.data[0].detalleEquipos
 
             var auxRuta = this.listRutas.find(
@@ -634,8 +629,7 @@ export default {
             } else {
               this.item.sector_name = 'Error en ruta'
             }
-            //Tareas de calibracion pendientes
-            //console.log('DALEEEEEEE ' , res.data.data[0].calibracion)
+
             this.tareasCalibracion = res.data.data[0].calibracion
           })
       } catch (error) {
@@ -659,18 +653,26 @@ export default {
     },
     async getTareasRealizadas() {
       const token = Cookies.get('token')
+
       try {
+        this.loadingCertificados = true;
         await axios
           .get('TareaRealizada', {
             headers: { Authorization: `Bearer ${token}` },
-            params: { equipoID: this.$route.params.id },
+            params: { equipoID: this.$route.params.id,
+            desde: this.desde,
+            hasta: this.hasta,
+            options: this.optionsCertificados }
           })
           .then((res) => {
-            console.log('res Tareas Realizadas', res.data.data)
-            this.tareasRealizadas = res.data.data
+            this.tareasRealizadas = res.data.data;
+            this.totalCertificados = res.data.total;
           })
       } catch (error) {
         console.log(error)
+      }
+      finally {
+        this.loadingCertificados = false;
       }
     },
     async getCertificado(id, nombreArchivo) {
@@ -701,13 +703,26 @@ export default {
     actualizarCertificado(item) {
       item.certificado = true
     },
+    async filterByDate(desde, hasta) {
+      this.desde = desde
+      this.hasta = hasta
+      this.getTareasRealizadas()
+    }
+  },
+  watch: {
+    optionsCertificados: {
+      handler() {
+        this.getTareasRealizadas()
+      },
+      deep: true,
+    }
   },
   mounted() {
     this.paramsId = this.$route.params.id
     this.getRutas()
     this.getEquipo()
     this.getEquipoAsignado()
-    // this.getTareasRealizadas();
+    this.getTareasRealizadas();
   },
 }
 </script>

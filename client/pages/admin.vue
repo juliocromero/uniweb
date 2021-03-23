@@ -111,6 +111,7 @@ export default {
       { text: 'Apellido', value: 'apellido' },
       { text: 'Email', value: 'email' },
       { text: 'Empresa', value: 'empresa' },
+      { text: 'Rol', value: 'rol_name' },
       { text: 'Creado', value: 'created_at' },
       { text: 'Acciones', value: 'acciones', sortable: false, align: 'start' },
     ],
@@ -124,9 +125,7 @@ export default {
             headers: { Authorization: `Bearer ${this.token}` },
           })
           .then((res) => {
-              console.log(res.data.data)
             this.tableData = res.data.data;
-            //this.instrumento_id = res.data.data.data[0].id
           })
       } catch (error) {
         console.log(error)

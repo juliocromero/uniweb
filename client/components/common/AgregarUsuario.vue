@@ -131,9 +131,9 @@ export default {
         contraseña: ''
       },
       listRol: [
-        { text: 'Administrador', value: 1 },
-        { text: 'Operador', value: 2 },
-        { text: 'Contratista', value: 3 },
+        { text: 'Administrador', value: 0 },
+        { text: 'Operador', value: 1 },
+        { text: 'Contratista', value: 2 },
       ],
       rules: [(v) => !!v || 'Requerido'],
     }

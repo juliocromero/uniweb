@@ -9,13 +9,13 @@
               >mdi-pencil
               </v-icon>
           </template>
-          <span>Editar Instrumento</span>
+          <span>Editar Instrumento Patrón</span>
         </v-tooltip>
 
         <v-dialog v-model="dialog" width="500">
           <v-card>
             <v-card-title class="headline white--text blue darken-4">
-              Editar Instrumento
+              Editar Instrumento Patrón
             </v-card-title>
 
             <v-card-text>
@@ -139,7 +139,7 @@
                     </v-col>
                   </v-row>
 
-                  <v-row>
+                  <v-row v-if="(userRol == 0)">
                     <v-col cols="6">
                       <v-autocomplete
                       v-model="instrumento.encargado_calibracion"
@@ -196,6 +196,7 @@ export default {
     return {
       valid:false,
       token: Cookies.get('token'),
+      userRol: Cookies.get('user_rol'),
       dialog: false,
       alertShow: false,
       alertMsg:'',
@@ -217,7 +218,7 @@ export default {
         tipo_id: null,
         unidad_id: null,
         magnitud_id: '',
-        encargado_calibracion: null
+        encargado_calibracion: Cookies.get('user_id')
       },
       rules:[ v => !!v || 'Requerido' ],
     }

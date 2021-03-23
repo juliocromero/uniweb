@@ -31,6 +31,36 @@
                       />
                     </v-col>
                   </v-row>
+                  
+                  <v-row>
+                    <v-col cols="9" v-if="textOrList">
+                      <v-autocomplete
+                      v-model="tarea.patronList"
+                      label="Instrumentos patrón"
+                      :items="instrumentosPatron"
+                      :rules="rules"
+                      multiple
+                      chips
+                      >
+                      </v-autocomplete>
+                    </v-col>
+
+                    <v-col cols="9" v-if="!textOrList">
+                      <v-text-field 
+                      v-model="tarea.patronText"
+                      label="Instrumentos patrón"
+                      :rules="rules"
+                      >
+                      </v-text-field>
+                    </v-col>
+
+                    <v-col cols="3">
+                      <v-btn
+                      @click="toggleTextOrList">
+                        {{textOrList ? 'Patrón' : 'Texto'}}
+                      </v-btn>
+                    </v-col>
+                  </v-row>
 
                   <v-row>
                     <v-col cols="12">
@@ -47,6 +77,7 @@
                           :first-day-of-week="1"
                           locale="es-ar"
                           width="auto"
+                          @change="cambioFecha"
                         ></v-date-picker>
                       </v-card>
                     </v-col>  
@@ -86,6 +117,9 @@
 <script>
 import axios from '~/plugins/axios';
 import Cookies from 'js-cookie';
+import moment from 'moment';
+
+
 export default {
    props: {
       calibracion_tarea_id: 1
@@ -94,7 +128,14 @@ export default {
   watch: {
     calibracion_tarea_id: function () {
       this.tarea.calibracion_tarea_id = this.calibracion_tarea_id;
-    }
+    },
+
+    dialog: function () {
+      if (this.dialog)
+      {
+        this.getListInstrumentosPatron();
+      }
+  }
   },
 
   data() {
@@ -106,9 +147,13 @@ export default {
       alertMsg:'',
       alertType:'success',
       calibracionTipo:[],
+      instrumentosPatron:[],
+      textOrList: true,
       tarea: {
         calibracion_tarea_id: 1,
-        fecha: ''
+        fecha: '',
+        patronText: '',
+        patronList: ''
       },
       certificado: '',
       rules:[ v => !!v || 'Requerido' ],
@@ -125,13 +170,21 @@ export default {
           formData.append('tareaFecha', this.tarea.fecha);
           formData.append('tareaId', this.tarea.calibracion_tarea_id);
 
+          if (!this.textOrList)
+          {
+            formData.append('patronText', this.tarea.patronText);
+          }
+          else
+          {
+            formData.append('patronList', '[' + this.tarea.patronList + ']');
+          }
 
           await axios.post('cargacertificado', formData, {
                 headers: { Authorization: `Bearer ${this.token}` }
               })
               .then(()=>{
-                this.alertMsg = "Se agregó una nueva tarea de calibración"
-                this.alerType = "success"
+                this.alertMsg = "Certificado cargado"
+                this.alertType = "success"
                 this.alertShow = true;
                 this.$refs.form.reset();
                 this.$emit('click');
@@ -140,17 +193,48 @@ export default {
       } catch (error) {
         console.log(error)
         this.alertMsg = "Hubo un error al processar tu solicitud"
-        this.alerType = "error"
+        this.alertType = "error"
         this.alertShow = true;
       }
     },
+    getListInstrumentosPatron(){
+        try {
+          axios.get('list-instrumentos-patron', {
+            headers: { Authorization: `Bearer ${this.token}` },
+            params: { fecha: this.tarea.fecha }
+          })
+          .then((res)=>{
+            this.instrumentosPatron = [];
+            for (const item of res.data.listPatron) {
+              this.instrumentosPatron.push({ text: item.serie , value: item.id});
+            }
+            this.tarea.patronList = '';
+          })
+
+          } catch (error) {
+            this.instrumentosPatron = [];
+            console.log(error)
+          }
+
+  },
     hide(){
       this.$refs.form.reset();
       this.dialog = false;
     },
     setCert(e) {
     this.certificado = e;
-  }
+    },
+    toggleTextOrList() {
+      this.textOrList = !this.textOrList;
+    },
+    cambioFecha() {
+      if (this.tarea.fecha == '')
+      {
+        this.tarea.fecha = moment().format('YYYY-MM-DD')
+      }
+
+      this.getListInstrumentosPatron();
+    }
   }
 
 }

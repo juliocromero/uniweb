@@ -20,7 +20,7 @@
         <v-dialog v-model="dialog" width="500">
           <v-card>
             <v-card-title class="headline white--text blue darken-4">
-              Agregar  Nueva Tarea
+              Agregar Nueva Tarea
             </v-card-title>
 
             <v-card-text>
@@ -143,8 +143,7 @@ export default {
       const obj = this.tarea;
       try {
         if(this.$refs.form.validate()){
-          this.tarea.instrumento_id = this.instrumento.intrumento_id;
-          this.tarea.calibracion_tipo_id = this.calibracionTipo[this.tarea.calibracion_tipo_id];
+          this.tarea.instrumento_id = this.instrumento.instrumento_id;
           
          await axios.post('calibracion', this.tarea ,{
               headers: { Authorization: `Bearer ${this.token}` },

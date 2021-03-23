@@ -2,20 +2,22 @@
   <div class="d-flex justify-end">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-              <v-icon
+            <v-btn
+              color="primary"
               v-bind="attrs"
               v-on="on"
-              @click="show"
-              >mdi-pencil
-              </v-icon>
+              @click="dialog = true"
+            >
+              Agregar
+            </v-btn>
           </template>
-          <span>Editar Instrumento</span>
+          <span>Agregar Instrumento Patrón</span>
         </v-tooltip>
 
-        <v-dialog v-model="dialog" width="500">
+        <v-dialog v-model="dialog" width="500" @input="RefreshInstrumento">
           <v-card>
             <v-card-title class="headline white--text blue darken-4">
-              Editar Instrumento
+              Agregar Instrumento Patrón
             </v-card-title>
 
             <v-card-text>
@@ -106,7 +108,8 @@
                       <v-text-field
                       v-model="instrumento.rango_de" 
                       label="Rango de"
-                      :rules="rules"
+                      :rules="rulesNum"
+                      type="number"
                       >
                       </v-text-field>
                     </v-col>
@@ -125,7 +128,8 @@
                       <v-text-field 
                       v-model="instrumento.rango_normal_de"
                       label="Rango normal de"
-                      :rules="rules"
+                      :rules="rulesNum"
+                      type="number"
                       >
                       </v-text-field>
                     </v-col>
@@ -139,7 +143,7 @@
                     </v-col>
                   </v-row>
 
-                  <v-row>
+                  <v-row v-if="(userRol == 0)">
                     <v-col cols="6">
                       <v-autocomplete
                       v-model="instrumento.encargado_calibracion"
@@ -173,7 +177,7 @@
               <v-btn color="error" text @click="hide">
                 Cancelar
               </v-btn>
-              <v-btn color="primary" text @click="editarInstrumento">
+              <v-btn color="primary" text @click="agregarInstrumento">
                 Ok
               </v-btn>
             </v-card-actions>
@@ -186,16 +190,18 @@
 import axios from '~/plugins/axios';
 import Cookies from 'js-cookie';
 export default {
-  props:{
-    id:{
-      type: String,
+  props: {
+    intrumento: {
+      type : Object,
       required: true
-    } 
+    }
   },
   data() {
     return {
       valid:false,
       token: Cookies.get('token'),
+      userRol: Cookies.get('user_rol'),
+      userId: Cookies.get('user_id'),
       dialog: false,
       alertShow: false,
       alertMsg:'',
@@ -208,6 +214,28 @@ export default {
         marca: "",
         modelo: "",
         serie: "",
+        rango_de: 0,
+        rango_a: null ,
+        rango_normal_de: 0,
+        rango_normal_a: null,
+        resolucion: null,
+        tolerancia: null, 
+        tipo_id: null,
+        unidad_id: null,
+        magnitud_id: null,
+        is_patron: true,
+        encargado_calibracion: null
+      },
+      rules:[ v => !!v || 'Requerido' ],
+      rulesNum:[ v => v > -1 || 'El rango no puede menor a 0' ],
+    }
+  },
+  methods:{
+    RefreshInstrumento(){
+      const instrumentoRefresh = {
+        marca: "",
+        modelo: "",
+        serie: "",
         rango_de: null,
         rango_a: null,
         rango_normal_de: null,
@@ -216,30 +244,22 @@ export default {
         tolerancia: null, 
         tipo_id: null,
         unidad_id: null,
-        magnitud_id: '',
+        magnitud_id: null,
+        is_patron: true,
         encargado_calibracion: null
-      },
-      rules:[ v => !!v || 'Requerido' ],
-    }
-  },
-  methods:{
-    show(){
-      this.getInstrumento();
-      this.getUnidad();
-      this.getMagnitud();
-      this.getInstrumentoTipo();
-      this.getEmpresas();
-      this.dialog = true;
+      }
+      this.instrumento = instrumentoRefresh
     },
-   async editarInstrumento(){
+   async agregarInstrumento(){
       try {
         if(this.$refs.form.validate()){
-          await axios.put(`instrumento/${this.id}`, this.instrumento ,{
+          console.log(this.instrumento)
+          await axios.post('instrumento', this.instrumento ,{
               headers: { Authorization: `Bearer ${this.token}` },
             })
             .then(()=>{
-              this.alertMsg = "Instrumento actualizado correctamente"
-              this.alertType = "success"
+              this.alertMsg = "Instrumento agregado correctamente"
+              this.alerType = "success"
               this.alertShow = true;
               this.$refs.form.reset();
               this.$emit('click');
@@ -248,23 +268,15 @@ export default {
       } catch (error) {
         console.log(error)
         this.alertMsg = "Hubo un error al processar tu solicitud"
-        this.alertType = "error"
+        this.alerType = "error"
         this.alertShow = true;
       }
     },
-   async getInstrumento(){
-        try {
-         await axios.get(`instrumento/${this.id}`, {
-            headers: { Authorization: `Bearer ${this.token}` },
-          })
-          .then((res)=>{
-            console.log('getIntrumento:',res.data.data);
-            this.instrumento = res.data.data;   
-          })
-          } catch (error) {
-            console.log(error)
-          }
-        },
+    hide(){
+      this.$refs.form.reset();
+      this.RefreshInstrumento();
+      this.dialog = false;
+    },
     getInstrumentoTipo(){
         try {
           axios.get('instrumentoTipo', {
@@ -272,8 +284,9 @@ export default {
           })
           .then((res)=>{
             for (const item of res.data.data) {
-              this.instrumentoTipo.push({ text:item.nombre, value:item.id });
+              this.instrumentoTipo.push({ text:item.nombre , value:item.id});
             }
+            console.log('instrumento Tipo:', this.instrumentoTipo);
           })
           } catch (error) {
             console.log(error)
@@ -286,52 +299,66 @@ export default {
           })
           .then((res)=>{
             for (const item of res.data.data) {
-              this.instrumentoUnidad.push({ text:item.nombre, value:item.id });
+              this.instrumentoUnidad.push({ text: item.nombre , value: item.id});
             }
+            console.log('instrumento Unidad:', this.instrumentoUnidad);
           })
 
           } catch (error) {
             console.log(error)
           }
 
-      },
-      getMagnitud(){
-      try {
-        axios.get('magnitud', {
-          headers: { Authorization: `Bearer ${this.token}` },
-        })
-        .then((res)=>{
-          for (const item of res.data.data) {
-            this.instrumentoMagnitud.push({ text:item.nombre, value:item.id });
-          }
-        })
-
-        } catch (error) {
-          console.log(error)
+  },
+    getMagnitud(){
+    try {
+      axios.get('magnitud', {
+        headers: { Authorization: `Bearer ${this.token}` },
+      })
+      .then((res)=>{
+        for (const item of res.data.data) {
+           this.instrumentoMagnitud.push({ text: item.nombre , value: item.id});
         }
-      },
+        console.log('instrumento Magnitud:', this.instrumentoMagnitud);
+      })
 
-      getEmpresas(){
-        try {
-          axios.get('getempresas', {
-            headers: { Authorization: `Bearer ${this.token}` },
-          })
-          .then((res)=>{
-            for (const item of res.data) {
-              this.listEmpresas.push({ text: item.empresa , value: item.id});
-            }
-          })
+      } catch (error) {
+        console.log(error)
+      }
 
-          } catch (error) {
-            console.log(error)
-          }
+  },
 
-      },
+  getEmpresas(){
+    try {
+      axios.get('getempresas', {
+        headers: { Authorization: `Bearer ${this.token}` },
+      })
+      .then((res)=>{
+        for (const item of res.data) {
+           this.listEmpresas.push({ text: item.empresa , value: item.id});
+        }
+      })
 
-      hide(){
-        this.dialog = false;
-        this.$refs.form.reset();
-      },
+      } catch (error) {
+        console.log(error)
+      }
+
+  }
+},
+  watch:{
+    dialog: function () {
+      if (this.dialog)
+      {
+        if (this.userRol == 2) {
+          this.instrumento.encargado_calibracion = this.userId;
+        }
+      }
+    }
+  },
+  created(){
+    this.getInstrumentoTipo();
+    this.getUnidad();
+    this.getMagnitud();
+    this.getEmpresas();
   }
 }
 </script>
