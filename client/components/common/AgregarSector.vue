@@ -10,7 +10,7 @@
         small 
         @click="show"
         >
-          <v-icon>mdi-pencil</v-icon>
+          <v-icon>add</v-icon>
        </v-btn>
       </template>
       <span>Agregar Sector</span>

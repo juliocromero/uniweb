@@ -23,7 +23,12 @@
             Instrumentos
           </v-list-item-title>
         </v-list-item>         
-        
+        <v-list-item class="menuUser pointer" @click="drawer=false" to="/instrumentos-patron">
+          <v-list-item-title>
+            <v-icon left color="#295382" align="center" >build</v-icon>
+            Instrumentos patrón
+          </v-list-item-title>
+        </v-list-item>         
       </v-list>
 
       <password/>

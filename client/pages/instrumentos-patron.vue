@@ -134,7 +134,7 @@ export default {
         this.loading = true;
         await axios
           .get('instrumentos', {
-            headers: { Authorization: `Bearer ${this.token}`} , params:{ desde: this.desde, hasta: this.hasta, options: this.options, buscar: this.txtBuscar, isPatron: false } ,
+            headers: { Authorization: `Bearer ${this.token}`} , params:{ desde: this.desde, hasta: this.hasta, options: this.options, buscar: this.txtBuscar } ,
           })
           .then((res) => {
             this.totalTableItems = res.data.total;
