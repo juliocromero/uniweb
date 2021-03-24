@@ -154,7 +154,6 @@
                       :equipoID="$route.params.id"
                       @click="getEquipo"
                       class="ml-3"
-                      @reload="reloadEquipo"
                     />
                   </v-col>
                 </v-row>
@@ -364,6 +363,9 @@
                     hide-default-footer
                     height="420"
                   >
+                  <template v-slot="">
+
+                  </template>
                   </v-data-table>
                 </v-card>
               </v-col>
@@ -448,6 +450,32 @@
                     no-data-text="Sin datos"
                     height="360"
                   >
+                 
+                    <template v-slot:[`item.patron`]="{ item }">
+                      <template  v-if="!item.patron_isString">
+                        <v-tooltip bottom v-for="it in item.patron" :key="it.idCert">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              v-on="on"
+                              v-bind="attrs"
+                              text
+                              small
+                              color="info"
+                              @click="getCertificado(it.idCert, it.certName)"
+                              target="_blank"
+                              download
+                            >
+                              {{ it.certName }}</v-btn
+                            >
+                          </template>
+                          <span>Descargar Certificado</span>
+                        </v-tooltip>
+                      </template>
+                      <template  v-if="item.patron_isString">
+                        {{item.patron}}
+                      </template>
+                    </template>
+
                     <template v-slot:[`item.certificado`]="{ item }">
                       <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
@@ -588,10 +616,6 @@ export default {
     }
   },
   methods: {
-    reloadEquipo(){
-      this.getEquipo()
-
-    },
     formFecha(item){
      
      if(item){
