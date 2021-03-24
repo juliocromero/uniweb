@@ -41,7 +41,7 @@
       <span class="white--text ml-2"><strong>Equipos</strong></span>
       
       <v-spacer />
-
+<div style="margin-right: 10px; color: white">{{userName}} [{{userRol}}]</div>
 <v-menu bottom left>
         <template v-slot:activator="{ on, attrs }">
           <v-btn dark icon v-bind="attrs" v-on="on">
@@ -49,15 +49,21 @@
           </v-btn>
         </template>
 
-       <v-list>
+      <v-list>
           <v-list-item class="menuUser pointer">
             <v-list-item-title  @click="toggleDialogPassword(true)">
               <v-icon left color="#295382" align="center" >lock</v-icon>
               Cambiar Contraseña
             </v-list-item-title>
           </v-list-item>
+           <v-list-item class="menuUser poiter" to="/admin">
+            <v-list-item-title>
+              <v-icon left color="#295382" >settings</v-icon>
+              Adm. Usuarios
+            </v-list-item-title>
+          </v-list-item>
           <v-list-item class="menuUser poiter">
-            <v-list-item-title @click="Salir()">
+            <v-list-item-title @click="SET_DESLOGIN()">
               <v-icon left color="#295382" >west</v-icon>
               Salir
             </v-list-item-title>
@@ -68,19 +74,24 @@
     <v-main>
         <nuxt />
     </v-main>
+    <password-dialog :dialog="password"/>
   </v-app>
 </template>
 
 <script>
+import Cookies from 'js-cookie';
 import { mapState, mapMutations } from "vuex";
-import password from "@/components/cambiarPassword";
+import passwordDialog from "@/components/public/cambiarPassword";
 
 export default {
   components:{
-    password
+    passwordDialog
   },
   data() {
     return {
+      password: false,
+      userName: Cookies.get('user_name'),
+      userRol: Cookies.get('user'),
       clipped: true,
       drawer: false,
       fixed: false,
@@ -110,6 +121,9 @@ export default {
     },
     redirigir(){
       this.$router.back();
+    },
+    toggleDialogPassword(){
+      this.password = true      
     }
   },
 }

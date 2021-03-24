@@ -1,6 +1,6 @@
 <template>
   <v-row justify="start">
-    <v-dialog v-model="dialogPassword" width="500">
+    <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-title class="headline v-card-titulo white--text"
           >Cambiar Contraseña</v-card-title
@@ -75,8 +75,13 @@ import "material-design-icons-iconfont/dist/material-design-icons.css";
 import { mapState, mapMutations } from "vuex";
 
 export default {
+  props:{
+    dialog:{
+      type:Boolean,
+      default: false
+    }
+  },
   data: () => ({
-    dialog: true,
     typeAlert: "error",
     AlertCambioPassword: false,
     mensajeCambioPassword: "",
@@ -92,18 +97,18 @@ export default {
     show3: false
   }),
   computed: {
-    ...mapState(["dialogPassword"]),
+   /*  ...mapState(["dialogPassword"]), */
   },
   methods: {
-    ...mapMutations(["toggleDialogPassword", "ocultarModalPassword"]),
+   /*  ...mapMutations(["toggleDialogPassword", "ocultarModalPassword"]), */
 
-    ocultarModalPassword(){
+  /*   ocultarModalPassword(){
       this.toggleDialogPassword(false)
       this.datosPassword.actual_password=''
       this.datosPassword.new_password=''
       this.datosPassword.confirm_password=''
     },
-    
+     */
      async cambiarPassword() {
     /*  let token = Cookies.get("token");
             fetch("http://127.0.0.1:3333/api/v1/change_pass", 
@@ -141,13 +146,13 @@ export default {
     },
   },
   watch: {
-    AlertCambioPassword : function() {
+    /* AlertCambioPassword : function() {
       if(this.AlertCambioPassword){
         setTimeout(() => {
           this.AlertCambioPassword = false
         }, 2500);
       }
-    }
+    } */
   }
 };
 </script>

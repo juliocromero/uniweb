@@ -72,20 +72,22 @@
     <v-main>
         <nuxt />
     </v-main>
+    <passwordDialog :dialog="dialog"/>
   </v-app>
 </template>
 
 <script>
 import { mapMutations } from "vuex";
-import password from "@/components/cambiarPassword";
+import passwordDialog from "@/components/public/cambiarPassword";
 import Cookies from 'js-cookie'
 
 export default {
   components:{
-    password
+    passwordDialog
   },
   data() {
     return {
+      dialog: false,
       clipped: true,
       drawer: false,
       fixed: false,
@@ -112,6 +114,9 @@ export default {
   },
   methods: {
     ...mapMutations(["SET_DESLOGIN"]),
+    toggleDialogPassword(){
+      this.dialog = true
+    }
   },
 }
 </script>

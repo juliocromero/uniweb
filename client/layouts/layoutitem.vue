@@ -15,7 +15,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import password from "@/components/cambiarPassword";
+import password from "@/components/public/cambiarPassword";
 
 export default {
   components:{

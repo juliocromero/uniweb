@@ -191,10 +191,10 @@
               <v-btn color="error" text @click="hide">
                 Cancelar
               </v-btn>
-              <v-btn v-if="manual" color="primary" text @click="asignar()">
+              <v-btn v-if="manual" color="primary" text @click="asignar">
                 Asignar Instrumento
               </v-btn>
-              <v-btn v-if="!manual" color="primary" text @click="agregarInstrumento">
+              <v-btn v-if="!manual" color="primary" text @click="asignar">
                 Asignar Instrumento Nuevo
               </v-btn>
             </v-card-actions>
@@ -258,6 +258,10 @@ export default {
     }
   },
   methods:{
+    resect(){
+      let instrumento = new Object(this.instrumento)
+      console.log(instrumento)
+    },
   handleInput (valor) {
     this.instrumento.tipo_id = valor;
   },
@@ -310,7 +314,6 @@ export default {
    async asignar(){
       try {
         const id = this.$route.params.id
-        console.log(id)
         await axios.put(`AsignadoNewInstrumento/${id}`, {"instrumento_id" : this.instrumento.id},{
             headers: { Authorization: `Bearer ${this.token}` },
           })
@@ -335,6 +338,8 @@ export default {
         this.alerType = "error"
         this.alertShow = true;
       }
+        this.$emit('reload')
+        this.dialog = false
     },
     hide(){
       this.$refs.form.reset();
@@ -342,6 +347,7 @@ export default {
       this.alertShow = false;
     },
     show(){
+      this.
       this.getUnidad();
       this.getMagnitud();
       this.getInstrumentoTipo();
@@ -397,6 +403,7 @@ export default {
   }
 },
 mounted(){
+  this.resect()
   this.getInstrumentList();
 },
 watch:{

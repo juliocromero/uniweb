@@ -153,6 +153,7 @@
                       :equipoID="$route.params.id"
                       @click="getEquipo"
                       class="ml-3"
+                      @reload="reloadEquipo"
                     />
                   </v-col>
                 </v-row>
@@ -582,6 +583,10 @@ export default {
     }
   },
   methods: {
+    reloadEquipo(){
+      this.getEquipo()
+
+    },
     formFecha(item){
      
      if(item){
