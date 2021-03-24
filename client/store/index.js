@@ -3,6 +3,7 @@ import cookie from 'cookie';
 import axios from "../plugins/axios";
 
 export const state = () => ({
+  rolUser: null,
   infoModal:{
     dialog: false,
     msj:"",
@@ -14,14 +15,23 @@ export const state = () => ({
   auth: false,
   dialogLoading: false
 });
-
+export const getters = {
+  doneTodos(state) {
+    return state.rolUser
+  }
+}
 export const mutations = {
-  async SET_AUTH(state, token) {
+  async SET_AUTH(state, res) {
+    console.log('set auth',res)
     state.auth = true;  
-    Cookies.set('token', token)
+    state.rolUser = res.user.rol
+    Cookies.set('token', res.token)
     this.$router.push('/')
   },
   async SET_AUTH_AUTOMATIC(state, res) {
+
+    console.log('set auth automatic',res)
+    state.rolUser = res.rol
     state.auth = true;
     this.$router.push('/')
   },
@@ -70,7 +80,7 @@ export const actions = {
              headers: { Authorization: `Bearer ${token}` }
            })
            .then(res => {
-             this.commit('SET_AUTH_AUTOMATIC', true );                    
+             this.commit('SET_AUTH_AUTOMATIC', res.data );                    
            }).catch(err => {               
            })                
      }

@@ -50,13 +50,13 @@
         </template>
 
       <v-list>
-          <v-list-item class="menuUser pointer">
-            <v-list-item-title  @click="toggleDialogPassword(true)">
+          <v-list-item class="menuUser pointer" v-if="isRolUser" >
+            <v-list-item-title @click="toggleDialogPassword(true)">
               <v-icon left color="#295382" align="center" >lock</v-icon>
               Cambiar Contraseña
             </v-list-item-title>
           </v-list-item>
-           <v-list-item class="menuUser poiter" to="/admin">
+           <v-list-item class="menuUser poiter" to="/admin" v-if="isRolUser">
             <v-list-item-title>
               <v-icon left color="#295382" >settings</v-icon>
               Adm. Usuarios
@@ -74,7 +74,7 @@
     <v-main>
         <nuxt />
     </v-main>
-    <password-dialog :dialog="password"/>
+    <password-dialog :dialog="password" @closeModal="toggleDialogPassword"/>
   </v-app>
 </template>
 
@@ -113,6 +113,15 @@ export default {
       title: 'Vuetify.js',
     }
   },
+  computed: {
+    ...mapState(['rolUser']),
+    isRolUser(){      
+      if(this.rolUser == 0){
+        return true
+      }
+      return false
+    }
+  },
   methods: {
     ...mapMutations(["SET_DESLOGIN"]),
     Salir(){
@@ -122,8 +131,8 @@ export default {
     redirigir(){
       this.$router.back();
     },
-    toggleDialogPassword(){
-      this.password = true      
+    toggleDialogPassword(val){
+      this.password = val
     }
   },
 }

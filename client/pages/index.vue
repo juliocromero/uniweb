@@ -20,7 +20,7 @@
               v-on:update:active="filtrarTabla"
               style="cursor: pointer"
             >
-              <template v-slot:append="{item}">
+              <template v-slot:append="{item}" v-if="isRolUser" >
                 <div class="delete-sector">
                <v-icon @click="DeleteSector(item)" class="borrar">delete_forever</v-icon>
                 </div>
@@ -186,11 +186,18 @@ export default {
     tableData: [],
   }),
   computed: {
-    ...mapState(['dialogPassword']),
+    ...mapState(['rolUser']),
 
     formTitle() {
       return this.editedIndex === -1 ? 'Nuevo' : 'Editar'
     },
+    isRolUser(){    
+      console.log(this.rolUser)  
+      if(this.rolUser == 0){
+        return true
+      }
+      return false
+    }
   },
   filters: {
     fecha(v) {

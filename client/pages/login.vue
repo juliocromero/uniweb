@@ -84,7 +84,7 @@ layout: "layoutnull",
           if (res.data) {
             console.log('dataToken:', res.data)
             this.setUser(res.data.user)
-            this.SET_AUTH(res.data.token)
+            this.SET_AUTH(res.data)
           }
         })
         .catch(error => {

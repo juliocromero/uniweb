@@ -154,6 +154,7 @@
                       </v-autocomplete>
                     </v-col>
                   </v-row>
+                  {{instrumento}}
                   <!-- Modal status http request -->
                   <v-row v-if="alertShow">
                     <v-col cols="12" class="px-0">
@@ -220,7 +221,7 @@ export default {
         tipo_id: null,
         unidad_id: null,
         magnitud_id: null,
-        is_patron: false,
+        is_patron: true,
         encargado_calibracion: null
       },
       rules:[ v => !!v || 'Requerido' ],
@@ -250,16 +251,18 @@ export default {
    async agregarInstrumento(){
       try {
         if(this.$refs.form.validate()){
-          console.log('Instrumentoer:', this.instrumento);
-          await axios.post('instrumento', this.instrumento ,{
+          await axios.post('instrumento', this.instrumento  ,{
               headers: { Authorization: `Bearer ${this.token}` },
             })
-            .then(()=>{
+            .then((res)=>{
+              console.log('instrumento creado',res)
               this.alertMsg = "Instrumento agregado correctamente"
               this.alerType = "success"
               this.alertShow = true;
               this.$refs.form.reset();
-              this.$emit('click');
+              let instrumento = {value: res.data.data.id , text: res.data.data.serie}
+              this.$emit('instrumentoCreado', instrumento);
+              this.dialog = false
             })
       }
       } catch (error) {
@@ -274,31 +277,29 @@ export default {
       this.RefreshInstrumento();
       this.dialog = false;
     },
-    getInstrumentoTipo(){
+    async getInstrumentoTipo(){
         try {
-          axios.get('instrumentoTipo', {
+          await axios.get('instrumentoTipo', {
             headers: { Authorization: `Bearer ${this.token}` },
           })
           .then((res)=>{
             for (const item of res.data.data) {
               this.instrumentoTipo.push({ text:item.nombre , value:item.id});
             }
-            console.log('instrumento Tipo:', this.instrumentoTipo);
           })
           } catch (error) {
             console.log(error)
           }
         },
-      getUnidad(){
+      async getUnidad(){
         try {
-          axios.get('unidad', {
+          await axios.get('unidad', {
             headers: { Authorization: `Bearer ${this.token}` },
           })
           .then((res)=>{
             for (const item of res.data.data) {
               this.instrumentoUnidad.push({ text: item.nombre , value: item.id});
             }
-            console.log('instrumento Unidad:', this.instrumentoUnidad);
           })
 
           } catch (error) {
@@ -306,16 +307,15 @@ export default {
           }
 
   },
-    getMagnitud(){
+    async getMagnitud(){
     try {
-      axios.get('magnitud', {
+      await axios.get('magnitud', {
         headers: { Authorization: `Bearer ${this.token}` },
       })
       .then((res)=>{
         for (const item of res.data.data) {
            this.instrumentoMagnitud.push({ text: item.nombre , value: item.id});
         }
-        console.log('instrumento Magnitud:', this.instrumentoMagnitud);
       })
 
       } catch (error) {
@@ -324,9 +324,9 @@ export default {
 
   },
 
-  getEmpresas(){
+  async getEmpresas(){
     try {
-      axios.get('getempresas', {
+      await axios.get('getempresas', {
         headers: { Authorization: `Bearer ${this.token}` },
       })
       .then((res)=>{

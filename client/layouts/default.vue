@@ -46,15 +46,14 @@
             <v-img max-width="40px" max-height="40px" src="user2.png" />
           </v-btn>
         </template>
-
-       <v-list>
-          <v-list-item class="menuUser pointer">
+       <v-list >
+          <v-list-item class="menuUser pointer" v-if="isRolUser"  >
             <v-list-item-title  @click="toggleDialogPassword(true)">
               <v-icon left color="#295382" align="center" >lock</v-icon>
               Cambiar Contraseña
             </v-list-item-title>
           </v-list-item>
-           <v-list-item class="menuUser poiter" to="/admin">
+           <v-list-item  v-if="isRolUser" class="menuUser poiter" to="/admin" >
             <v-list-item-title>
               <v-icon left color="#295382" >settings</v-icon>
               Adm. Usuarios
@@ -72,12 +71,12 @@
     <v-main>
         <nuxt />
     </v-main>
-    <passwordDialog :dialog="dialog"/>
+    <passwordDialog :dialog="dialog" @closeModal="toggleDialogPassword"/>
   </v-app>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 import passwordDialog from "@/components/public/cambiarPassword";
 import Cookies from 'js-cookie'
 
@@ -112,10 +111,19 @@ export default {
       title: 'Vuetify.js',
     }
   },
+  computed: {
+    ...mapState(['rolUser']),
+    isRolUser(){      
+      if(this.rolUser == 0){
+        return true
+      }
+      return false
+    }
+  },
   methods: {
     ...mapMutations(["SET_DESLOGIN"]),
-    toggleDialogPassword(){
-      this.dialog = true
+    toggleDialogPassword(val){
+      this.dialog = val
     }
   },
 }

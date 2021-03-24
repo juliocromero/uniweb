@@ -149,7 +149,7 @@
                       Instrumentos del Equipo
                     </div>
                     <asignar-instrumento
-                      v-if="(userRol == 0)"
+                      v-if="rolUser == 0"
                       :equipo="item"
                       :equipoID="$route.params.id"
                       @click="getEquipo"
@@ -372,10 +372,10 @@
         </v-card>
       </v-container>
 
-      <v-container>
+      <v-container  >
         <v-card color="#FAFAFA">
           <v-container>
-            <v-row>
+            <v-row >
               <v-col cols="12" sm="6">
                 <v-row>
                   <v-col class="d-flex pr-1">
@@ -383,7 +383,7 @@
                       Tareas de Calibración
                     </div>
                     <agregar-calibracion
-                      v-if="(userRol == 0)"
+                      v-if="rolUser == 0"
                       :instrumento="item"
                       @click="getEquipo"
                       class="ml-3"
@@ -392,7 +392,6 @@
                 </v-row>
                 <v-divider></v-divider>
                 <v-card
-                  height="425"
                   width="auto"
                   flat
                   style="border: 2px groove #d6d6d8"
@@ -403,7 +402,7 @@
                     :headers="headersTareasCalibracion"
                     :items="tareasCalibracion"
                     hide-default-footer
-                    height="420"
+                    height="515"
                   >
                     <template v-slot:[`item.cargar`]>
                       <cargar-tarea-calibracion-realizada
@@ -414,22 +413,21 @@
                   </v-data-table>
                 </v-card>
               </v-col>
-              <v-col cols="12" sm="6" class="mt-2">
+              <v-col cols="12" sm="6" >
                 <div class="overline">CERTIFICADOS</div>
                 <v-divider></v-divider>
-                <v-col>
+                <div class="is-flex">
                   <filtro @click="filterByDate" ref="Filtro"/>
-                  <div width="100%" class="d-flex justify-end" 
-                    style="margin-top : -6%">
-                    <v-btn
-                    text
-                    color="error"
-                    @click="limpiarFiltros"
-                  >
-                  Limpiar Filtros
-                </v-btn>
+                  <div width="100%" class="d-flex justify-end align-center">
+                      <v-btn
+                          text
+                          color="error"
+                          @click="limpiarFiltros"
+                        >
+                        Limpiar Filtros
+                      </v-btn>
                   </div>
-                </v-col>
+                </div>
                 
                 <v-divider></v-divider>
                 <v-card
@@ -495,6 +493,7 @@ import AsignarInstrumento from '~/components/common/AsignarInstrumento.vue'
 import AgregarCalibracion from '~/components/common/AgregarCalibracion.vue'
 import CargarTareaCalibracionRealizada from '~/components/common/CargarTareaCalibracionRealizada.vue'
 import download from 'downloadjs'
+import {mapState} from 'vuex'
 
 export default {
   middleware: 'NOAUTH',
@@ -516,7 +515,6 @@ export default {
       equipoAsignado: [],
       listRutas: [],
      token: Cookies.get('token'),
-     userRol: Cookies.get('user_rol'),
       item: {
         fecha_creacion_equipo: '',
         fecha_update_equipo: '',
@@ -586,6 +584,9 @@ export default {
       totalCertificados: 0,
       loadingCertificados: false
     }
+  },
+  computed:{
+    ...mapState('rolUser')
   },
   methods: {
     reloadEquipo(){
@@ -789,4 +790,10 @@ export default {
   width:250px;
   background-color: slategrey;
 } */
+@media (min-width: 1500px) {
+  .is-flex{
+    display: flex;
+    
+  }
+}
 </style>

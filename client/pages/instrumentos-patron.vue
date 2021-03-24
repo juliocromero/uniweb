@@ -43,7 +43,7 @@
                       <v-btn
                         small
                         depressed
-                        class="serie"
+                        class="tag"
                         v-bind="attrs"
                         v-on="on"
                       >
@@ -195,6 +195,14 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.tag {
+  cursor: pointer;
+  color: blue;
+  background: lightblue;
+}
+.tag:hover {
+  color: white;
+  background: #1976d2;
+}
 </style>

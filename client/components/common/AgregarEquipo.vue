@@ -60,7 +60,7 @@
                 ></v-autocomplete>
               </v-col>
               <v-col cols="3" class="d-flex justify-center align-center">
-                <agregar-instrumento @click="nuevoInstrumento"/>
+                <agregar-instrumento @click="nuevoInstrumento" @instrumentoCreado="newInstrument"/>
               </v-col>
               <v-col cols="12">
                 <v-textarea
@@ -147,6 +147,10 @@ export default {
     }
   },
   methods:{
+    newInstrument(value){
+      this.instrumentos.push(value)
+      this.item.instrumento_id = value.value
+    },
    async agregarEquipo(){
       try {
          if(this.$refs.form.validate()){

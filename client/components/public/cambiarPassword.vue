@@ -1,6 +1,6 @@
 <template>
   <v-row justify="start">
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog v-model="dialogPass" width="500" @input="closeModal">
       <v-card>
         <v-card-title class="headline v-card-titulo white--text"
           >Cambiar Contraseña</v-card-title
@@ -57,11 +57,11 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn color="red" text @click="ocultarModalPassword"
+          <v-btn color="red" text @click="closeModal(false)"
             >Cancelar</v-btn
           >
 
-          <v-btn color="green darken-1" text @click="cambiarPassword()"
+          <v-btn color="green darken-1" text @click="cambiarPassword"
             >Aceptar</v-btn
           >
         </v-card-actions>
@@ -72,7 +72,8 @@
 
 <script>
 import "material-design-icons-iconfont/dist/material-design-icons.css";
-import { mapState, mapMutations } from "vuex";
+import axios from '@/plugins/axios'
+import Cookies from 'js-cookie'
 
 export default {
   props:{
@@ -85,7 +86,7 @@ export default {
     typeAlert: "error",
     AlertCambioPassword: false,
     mensajeCambioPassword: "",
-    dialog: false,
+    dialogPass: false,
     nameRules: [(v) => !!v || "Este campo es requerido"],
     datosPassword: {
       actual_password: "",
@@ -97,62 +98,35 @@ export default {
     show3: false
   }),
   computed: {
-   /*  ...mapState(["dialogPassword"]), */
   },
   methods: {
-   /*  ...mapMutations(["toggleDialogPassword", "ocultarModalPassword"]), */
-
-  /*   ocultarModalPassword(){
-      this.toggleDialogPassword(false)
-      this.datosPassword.actual_password=''
-      this.datosPassword.new_password=''
-      this.datosPassword.confirm_password=''
+    closeModal(value){
+      this.$emit('closeModal', value)
     },
-     */
      async cambiarPassword() {
-    /*  let token = Cookies.get("token");
-            fetch("http://127.0.0.1:3333/api/v1/change_pass", 
-            {
-            method: "PUT",
-            headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json; charset=UTF-8'
-            },
-            body: JSON.stringify(this.datosPassword),
-            })
-            .then( response => {
-                return response.json()
-            })
-            .then(data => {
-                this.datosPassword.actual_password=""
-                this.datosPassword.new_password=""
-                this.datosPassword.confirm_password=""
-
-                if(data.menssage === "Constraseña actual Incorrecta")
-                {
-                    this.typeAlert = "error"
-                    this.mensajeCambioPassword = data.menssage
-                    this.AlertCambioPassword= true
-                }else if(data.menssage === "Las contraseña no coinciden"){
-                    this.typeAlert = "error"
-                    this.mensajeCambioPassword = data.menssage
-                    this.AlertCambioPassword= true
-                }else if(data.menssage === "Cambio de contraseña con exito!"){
-                    this.typeAlert = "success"
-                    this.mensajeCambioPassword = data.menssage
-                    this.AlertCambioPassword= true
-                }})
-            .catch(error => console.error('Error: ',error)); */
+     let token = Cookies.get("token");
+           await axios.put("change_pass",this.datosPassword,
+           {headers: { Authorization: `Bearer ${token}` }})
+           .then(res => {
+             console.log('response',res)
+             this.AlertCambioPassword = true
+             this.mensajeCambioPassword = res.data.menssage
+             if(res.data.menssage === 'Cambio de contraseña con exito!'){
+               this.typeAlert = 'success'
+               this.closeModal(false)
+             }
+           })
+           .catch(err => {
+             console.log('response', err)
+           })
     },
   },
   watch: {
-    /* AlertCambioPassword : function() {
-      if(this.AlertCambioPassword){
-        setTimeout(() => {
-          this.AlertCambioPassword = false
-        }, 2500);
+    dialog(newVal){
+      if(newVal){
+        this.dialogPass = newVal
       }
-    } */
+    }
   }
 };
 </script>
