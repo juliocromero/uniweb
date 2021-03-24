@@ -2,6 +2,7 @@
 
 const { validate } = use('Validator');
 const User = use('App/Models/User');
+const Equipo = use('App/Models/Equipo');
 const CalibracionTarea = use('App/Models/CalibracionTarea');
 const CalibracionTareaRealizada = use('App/Models/CalibracionTareaRealizada');
 var moment = require('moment');
@@ -12,19 +13,41 @@ class CalibracionTareaRealizadaController {
   
   async index ({ request, response, view , auth}) {
      //Chequea token
-     try {
-      await auth.check();
+     //var equipo;
+     let {desde , hasta} = request.get();
+     const {equipoID} = request.all();
+     desde = desde || [];
+     hasta = hasta || [];
+     console.log(desde , hasta)
+     /*try {
+      const user = await auth.getUser();
+ 
+      equipo = await Equipo.query().with('instrumento').where('id', equipoID).fetch();
+      equipo = equipo.toJSON();
+      
+      if (equipo.length == 1)
+      {
+        if (user.rol == 2 && equipo[0].instrumento.encargado_calibracion != user.id) {
+          throw 'error';
+        }
+      }
+      else
+      {
+        return response.status(400).json('Equipo no encontrado.');
+      }
     }
     catch (error)
     {
       return response.status(401).json('Acceso no autorizado.');
-    }
+    }*/
 
     try {
-      const {equipoID} = request.all();
-      
-      let TareaRealizada = await CalibracionTareaRealizada.query().with('realizada').with('tarea').with('tarea.instrumento').with('tarea.tipo').
-      where('equipo_id', equipoID).orderBy('fecha', 'DESC').fetch();
+      let TareaRealizada = await CalibracionTareaRealizada.query()
+      .with('realizada')
+      .with('tarea')
+      .with('tarea.instrumento')
+      .with('tarea.tipo')
+      .orderBy('fecha', 'DESC').fetch();
 
       TareaRealizada = TareaRealizada.toJSON();
 
@@ -34,6 +57,7 @@ class CalibracionTareaRealizadaController {
          "id": e.id,
          "intrumento": e.tarea.instrumento.serie,
          "fecha": e.fecha,
+         "patron": e.patron,
          "realizo": e.realizada.empresa,
          "certificado": e.certificado 
        }
@@ -42,7 +66,7 @@ class CalibracionTareaRealizadaController {
       response.status(200).json({ menssage: 'Tarea Realizada', data: resp })
     } catch (error) {
       console.log(error)
-      response.status(404).json({ menssage: 'Hubo un error al realizar la operación', error });
+      response.status(500).json({ menssage: 'Hubo un error al realizar la operación', error });
     }
   }
 
@@ -62,7 +86,7 @@ class CalibracionTareaRealizadaController {
       }
       else
       {
-        if (registroCert[0].realizo != user.id && user.rol == 3) {
+        if (registroCert[0].realizo != user.id && user.rol == 2) {
           return response.status(401).json('Acceso no autorizado.')
         }
       }
@@ -79,7 +103,7 @@ class CalibracionTareaRealizadaController {
       if (isExist) {
           return response.download(Helpers.appRoot(`storage/archivos/certificados/${registroCert[0].tarea.instrumento_id}/${registroCert[0].certificado}`));
       }
-      return 'File does not exist';
+      return response.status(500).json('El archivo no existe.');
 
     }
     catch(error)
@@ -99,10 +123,10 @@ class CalibracionTareaRealizadaController {
   async store ({ request, response, auth }) {
 
     // Request
-    var {tareaFecha, tareaId} = request.all();
+    var {tareaFecha, tareaId, patronText, patronList} = request.all();
     //tarea=tarea['tarea']
     // Variables
-    var user, tareaCalibracion;
+    var user, tareaCalibracion, patron = null, patronListArray = [];
 
     // Validaciones
     try {
@@ -120,9 +144,48 @@ class CalibracionTareaRealizadaController {
           return response.status(400).json('Acceso no autorizado.')
         }
       }
+
+      if (patronText) {
+        if (patronText != '')
+        {
+          patron = patronText;
+        }
+      }
+
+      if (patronList)
+      {
+        if(patronList != '' && patronList != '[]')
+        {
+          patron = patronList
+          patronListArray = JSON.parse(patronList)
+
+          var patronesInvalidos = await Database.select('instrumento.id', 'instrumento.serie').from('instrumento')
+            .joinRaw(`INNER JOIN (
+              SELECT t1.id AS idJoin, MAX(t3.fecha) AS fecha 
+            FROM instrumento AS t1
+            INNER JOIN calibracion_tarea AS t2 ON t1.id = t2.instrumento_id
+            INNER JOIN calibracion_tarea_realizada AS t3 ON t2.id = t3.calibracion_tarea_id
+            WHERE t1.is_patron = 1 AND t1.encargado_calibracion = ${user.id} AND t3.fecha < '${tareaFecha}' AND DATEADD(day,t2.frecuencia,t3.fecha) > '${tareaFecha}' 
+            AND t1.id IN (${patronListArray})
+            GROUP BY t1.id
+            ) AS b ON instrumento.id = b.idJoin`)
+            .orderBy('instrumento.serie', 'ASC')
+     
+            if (patronesInvalidos.length != patronListArray.length || patronListArray.length == 0)
+            {
+              return response.status(400).json('Instrumentos patrón no certificados o nulos.')
+            }
+        }
+      }
+
+      if (!patron)
+      {
+        return response.status(400).json('Debe ingresar los patrones utilizados.')
+      }
+
     } catch (error) {
       console.log(error)
-      return response.status(401).json('Acceso no autorizado.');
+      return response.status(401).json('Acceso no autorizado.' + error);
     }
 
     // PDF
@@ -145,11 +208,12 @@ class CalibracionTareaRealizadaController {
 
       const newCertRegister = new CalibracionTareaRealizada();
 
-      newCertRegister.calibracion_tarea_id = tareaId,
-      newCertRegister.fecha = tareaFecha,
-      newCertRegister.realizo = user.id,
-      newCertRegister.certificado = pdfSubido.clientName,
-      newCertRegister.equipo_id = tareaCalibracion[0].instrumento.equipo.id
+      newCertRegister.calibracion_tarea_id = tareaId;
+      newCertRegister.fecha = tareaFecha;
+      newCertRegister.realizo = user.id;
+      newCertRegister.certificado = pdfSubido.clientName;
+      newCertRegister.patron = patron;
+      newCertRegister.equipo_id = tareaCalibracion[0].instrumento.equipo.id;
 
       await newCertRegister.save();
 
@@ -161,16 +225,40 @@ class CalibracionTareaRealizadaController {
     }
   }
 
-  /**
-   * Display a single calibraciontarearealizada.
-   * GET calibraciontarearealizadas/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
+  async getListInstrumentosPatron ({ auth, request, response }) {
+    var user;
+    try {
+
+      user = await auth.getUser();
+
+    } catch (error) {
+      return response.status(401).json('Acceso no autorizado.');
+    }
+
+    try {
+      var {fecha} = request.all();
+
+      if (!fecha)
+      {
+        fecha = moment().format('YYYY-MM-DD');
+      }
+      
+      var data = await Database.select('instrumento.id', 'instrumento.serie').from('instrumento')
+      .joinRaw(`INNER JOIN (
+        SELECT t1.id AS idJoin, MAX(t3.fecha) AS fecha 
+      FROM instrumento AS t1
+      INNER JOIN calibracion_tarea AS t2 ON t1.id = t2.instrumento_id
+      INNER JOIN calibracion_tarea_realizada AS t3 ON t2.id = t3.calibracion_tarea_id
+      WHERE t1.is_patron = 1 AND t1.encargado_calibracion = ${user.id} AND t3.fecha < '${fecha}' AND DATEADD(day,t2.frecuencia,t3.fecha) > '${fecha}'
+      GROUP BY t1.id
+      ) AS b ON instrumento.id = b.idJoin`)
+      .orderBy('instrumento.serie', 'ASC')
+
+
+      return response.status(200).json({listPatron: data})
+    } catch (error) {
+      response.status(500).json({ menssage: 'Hubo un error al realizar la operación', error });
+    }
   }
 
   /**

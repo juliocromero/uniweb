@@ -6,6 +6,10 @@
 
 
 const Sector = use('App/Models/Sector');
+
+const SectorPertenece = use('App/Models/Sector');
+const Database = use('Database');
+const { validate } = use('Validator');
 var listRutas = [];
 
 /**
@@ -119,7 +123,40 @@ class SectorController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store ({ request, response, auth }) {
+    try {
+      let { nombre , ruta_id} = request.all();
+      const rules = {
+        nombre : 'required'
+      }
+      let validation = await validate({ nombre }, rules);
+      if (validation.fails()) {
+        return response.status(404).json({ message: "Datos Insufiente" });
+      }
+      const user = await auth.getUser();
+      if(user.rol == 0 && ruta_id == "/"){
+        const sector = await Sector.create({
+          nombre,
+          planta_id : 1,
+        })
+      return response.status(200).json({menssage: 'Sector padre creado con exito.!'}) 
+      }else if( user.rol == 0){
+        const sectorRuta = await Sector.create({
+          nombre,
+          planta_id: 1
+        })
+        const insertHijo = await Database.table('sector_pertenece').insert({ sector_id : sectorRuta.id , pertenece_a_sector_id : ruta_id })
+      }
+      return response.status(200).json({menssage: 'Sector padre hijo creado con exito.!'})
+    } catch (error) {
+      console.log(error)
+       if (error.name == 'InvalidJwtToken') {
+        return response.status(400).json({ menssage: 'Usuario no Valido' })
+      }
+      response.status(400).json({
+        menssage: "Hubo un error al realizar la operación",
+      })
+    }
   }
 
   /**
@@ -165,7 +202,27 @@ class SectorController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params, request, response, auth }) {
+    const id = params.id
+    try {
+      const user = await auth.getUser()
+      if (user.rol == 0) {
+      //  const sectorHijo = await SectorPertenece.query().where('sector_id' , id).fetch();
+        const sec = await Sector.findOrFail(id);
+        await sec.delete();
+        return response.status(200).json({ menssage: 'Sector eliminado con Exito!' })
+      }
+    } catch (error) {
+      console.log(error)
+      if (error.name == 'InvalidJwtToken') {
+        return response.status(400).json({ menssage: 'Usuario no Valido' })
+      }
+      response.status(404).json({
+        message: "Sector a eliminar no encontrado",
+        id
+      });
+      return;
+    }
   }
 }
 

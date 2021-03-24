@@ -28,6 +28,8 @@ Route.group(() => {
     Route.get('sector', 'SectorController.index');
     Route.post('login', 'UserController.login');
     Route.post('register', 'UserController.store');
+    Route.get('getempresas', 'UserController.getListEmpresas');
+    Route.post('setpass', 'UserController.setPass') //Borrame
 }).prefix('api/v1');
 
 //Rutas Equipos Asignados
@@ -43,7 +45,7 @@ Route.delete("api/v1/equipo/:id", "EquipoController.destroy");
 
 
 // Rutas Instrumentos
-Route.get('/api/v1/instrumento' , 'InstrumentoController.index');
+Route.get('/api/v1/instrumentos' , 'InstrumentoController.index');
 Route.get('/api/v1/instrumento/:id' , 'InstrumentoController.show');
 Route.get('/api/v1/instrumentoslist' , 'InstrumentoController.getInstrumentosList');
 Route.post('/api/v1/instrumento' , 'InstrumentoController.store');
@@ -79,9 +81,10 @@ Route.put('/api/v1/calibracion/:id' , 'CalibracionTareaController.update');
 Route.get('/api/v1/TareaRealizada' , 'CalibracionTareaRealizadaController.index');
 Route.post('/api/v1/cargacertificado' , 'CalibracionTareaRealizadaController.store');
 Route.get('/api/v1/certificado' , 'CalibracionTareaRealizadaController.getCertificado');
+Route.get('/api/v1/list-instrumentos-patron' , 'CalibracionTareaRealizadaController.getListInstrumentosPatron');
 
 
-//rutas pruebas img & pdf
-Route.post('/api/v1/pruebas' , 'EquipoController.prueba');
-Route.get('/api/v1/pruebas/:FileName' , 'EquipoController.index');
-Route.post('/api/v1/pruebasPDF' , 'EquipoController.prueba1');
+//sector
+
+Route.post('/api/v1/sector' , 'SectorController.store');
+Route.delete('/api/v1/sector/:id' , 'SectorController.destroy');

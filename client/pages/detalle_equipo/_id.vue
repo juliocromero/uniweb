@@ -149,6 +149,7 @@
                       Instrumentos del Equipo
                     </div>
                     <asignar-instrumento
+                      v-if="(userRol == 0)"
                       :equipo="item"
                       :equipoID="$route.params.id"
                       @click="getEquipo"
@@ -381,6 +382,7 @@
                       Tareas de Calibración
                     </div>
                     <agregar-calibracion
+                      v-if="(userRol == 0)"
                       :instrumento="item"
                       @click="getEquipo"
                       class="ml-3"
@@ -416,7 +418,8 @@
                 <v-divider></v-divider>
                 <v-col>
                   <filtro @click="filterByDate" ref="Filtro"/>
-                  <div width="100%" class="d-flex justify-end">
+                  <div width="100%" class="d-flex justify-end" 
+                    style="margin-top : -6%">
                     <v-btn
                     text
                     color="error"
@@ -511,6 +514,8 @@ export default {
       hasta: null,
       equipoAsignado: [],
       listRutas: [],
+     token: Cookies.get('token'),
+     userRol: Cookies.get('user_rol'),
       item: {
         fecha_creacion_equipo: '',
         fecha_update_equipo: '',

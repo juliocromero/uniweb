@@ -107,10 +107,10 @@ class EquipoController {
   }
 
   async getEquiposTable ({ request, response, view, auth }) {
-
+    var user;
     //Chequea token
     try {
-      await auth.check();
+      user = await auth.getUser();
     }
     catch (error)
     {
@@ -144,6 +144,11 @@ class EquipoController {
       .leftJoin('sector', 'equipo.sector_id', 'sector.id')
       .leftJoin('users', 'instrumento.encargado_calibracion', 'users.id')
       .joinRaw('LEFT JOIN (SELECT instrumento_id, MIN([proxima]) as proximaCalib FROM calibracion_tarea GROUP BY instrumento_id) AS b ON equipo.instrumento_id = b.instrumento_id')
+
+      if (user.rol == 2)
+      {
+        query.where('instrumento.encargado_calibracion', user.id)
+      }
 
       if (filtroTree !== undefined)
       {
@@ -274,7 +279,7 @@ class EquipoController {
           
             return response.download(Helpers.appRoot(`storage/archivos/certificados/${req.id}/${cert[0].certificado}`));
         }
-        return 'File does not exist';
+        return response.status(400).json('Error: El archivo no existe.');
       }
       else
       {
@@ -284,7 +289,7 @@ class EquipoController {
       
 
     } catch (error) {
-      return response.status(400).json({ menssage: 'Error al buscar el certificado.' })
+      return response.status(400).json('Error al buscar el certificado.')
     }
 
   }
@@ -542,12 +547,12 @@ class EquipoController {
   async newInstrumento({request, response, params: {id} , auth}){
     try {
       const {instrumento_id} = request.all();
+      console.log(instrumento_id);
       const user = await auth.getUser();
       if(user.rol == 0){
         let ValidateEquipo = await Equipo.findBy('id' , id);
         ValidateEquipo = ValidateEquipo.toJSON();
        // console.log(ValidateEquipo)
-       // console.log(instrumento_id);
         if(instrumento_id){
           const equipo = await Equipo.query().where('id' , id).update({instrumento_id: instrumento_id}) 
         }else{
@@ -555,7 +560,7 @@ class EquipoController {
         }
         let equiposAsignados = await EquipoAsignacion.findBy('equipo_id' , id);
         equiposAsignados = equiposAsignados.toJSON();
-        console.log(equiposAsignados)
+        //console.log(equiposAsignados)
             if(equiposAsignados.equipo_id == id && equiposAsignados.hasta == null){
               const p = await EquipoAsignacion.query().where('equipo_id', id).update({hasta: moment().format('YYYY-MM-DD HH:mm:ss')})  
             }
