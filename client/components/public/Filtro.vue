@@ -74,7 +74,7 @@
         </v-menu>
       </v-col>
 
-      <v-col cols="12" md="4" class="d-flex justify-end" v-if="!home" > 
+      <v-col cols="12" md="4" class="d-flex" v-if="!home" > 
         <v-btn color="grey darken-1" outlined height="40" width="40px" @click="filtrar">
           <div class="text-button-filter">
             <v-icon>filter_list</v-icon>

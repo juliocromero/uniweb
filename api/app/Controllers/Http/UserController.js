@@ -6,18 +6,56 @@ var moment = require('moment');
 
 class UserController {
 
+  async setPass({ response, request }) {
+    try {
+      var user = await User.find(1);
+      user.password = '1234'
+      await user.save();
+
+      return 1
+    }
+    catch(error)
+    {
+      return error
+    }
+  }
+
   async index({ auth, response, request }) {
     //Chequea token
     try {
-      await auth.check();
+      var user = await auth.getUser();
+
+      if (user.rol != 0) {
+        throw 'error'
+      }
     }
     catch (error) {
       return response.status(401).json('Acceso no autorizado.');
     }
+
     try {
-      var query = User.query();
-      let user = await User.query().fetch();
-      response.status(200).json({ menssage: 'Usuario', data: user })
+      var data = await User.all();
+      data = data.toJSON()
+      data.forEach(it => {
+        switch (it.rol) {
+          case 0:
+            it.rol_name = 'Administrador'
+            break;
+        
+          case 1:
+            it.rol_name = 'Operador'
+            break;
+
+          case 2:
+            it.rol_name = 'Contratista'
+            break;
+
+          default:
+            it.rol_name = 'Indefinido'
+            break;
+        }
+      });
+      response.status(200).json({ menssage: 'Usuario', data: data })
     } catch (error) {
       console.log(error)
       response.status(404).json({ menssage: 'Hubo un error al realizar la operación', error });
@@ -148,6 +186,23 @@ class UserController {
         message: "Usuario a eliminar no encontrado",
         id
       });
+    }
+  }
+
+  async getListEmpresas({ auth, response, request}) {
+    try {
+      var user = await auth.getUser();
+
+      if (user.rol == 0)
+      {
+        var data = await User.query().select('id', 'empresa').where('rol', 2).fetch();
+        data = data.toJSON();
+
+        return data;
+      }
+      return user.rol
+    } catch (error) {
+      return response.status(500).json({ menssage: error })
     }
   }
 }
