@@ -154,7 +154,6 @@
                       </v-autocomplete>
                     </v-col>
                   </v-row>
-                  {{instrumento}}
                   <!-- Modal status http request -->
                   <v-row v-if="alertShow">
                     <v-col cols="12" class="px-0">

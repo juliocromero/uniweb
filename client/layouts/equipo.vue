@@ -50,7 +50,7 @@
         </template>
 
       <v-list>
-          <v-list-item class="menuUser pointer" v-if="isRolUser" >
+          <v-list-item class="menuUser pointer" >
             <v-list-item-title @click="toggleDialogPassword(true)">
               <v-icon left color="#295382" align="center" >lock</v-icon>
               Cambiar Contraseña

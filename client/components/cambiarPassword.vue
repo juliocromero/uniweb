@@ -76,7 +76,6 @@ import { mapState, mapMutations } from "vuex";
 
 export default {
   data: () => ({
-    dialog: true,
     typeAlert: "error",
     AlertCambioPassword: false,
     mensajeCambioPassword: "",
@@ -106,15 +105,20 @@ export default {
     },
     
      async cambiarPassword() {
-      let token = Cookies.get("token");
+        try {
+          const data = new FormData();
+          data.append('actual_password', this.datosPassword.actual_password);
+          data.append('new_password', this.datosPassword.new_password);
+          data.append('confirm_password', this.datosPassword.confirm_password);
+
+          let token = Cookies.get("token");
             fetch("change_pass", 
             {
             method: "PUT",
             headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json; charset=UTF-8'
+            Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify(this.datosPassword),
+            body: data,
             })
             .then( response => {
                 return response.json()
@@ -137,8 +141,13 @@ export default {
                     this.typeAlert = "success"
                     this.mensajeCambioPassword = data.menssage
                     this.AlertCambioPassword= true
-                }})
-            .catch(error => console.error('Error: ',error)); 
+                }}) 
+
+        } catch (error) {
+          console.error('Error: ',error)
+        }
+
+            
     },
   },
   watch: {

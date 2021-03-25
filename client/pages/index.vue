@@ -6,7 +6,7 @@
           <v-col class="d-flex pb-0 pl-1">
             <div class="overline">Sectores</div>
             <v-spacer />
-            <agregar-sector @reloag="reloag" />
+            <agregar-sector @reloag="reloag" v-if="isRolUser"/>
           </v-col>
           <v-divider></v-divider>
           <div>
@@ -99,6 +99,7 @@
                 <v-row class="d-flex justify-center">
                   <ultima-tarea-realizada
                     @click="downloadUltCert(item.instrumento_id)"
+                    class="mr-2"
                   />
                   <editar-equipo
                     :id="item.id"
@@ -192,7 +193,6 @@ export default {
       return this.editedIndex === -1 ? 'Nuevo' : 'Editar'
     },
     isRolUser(){    
-      console.log(this.rolUser)  
       if(this.rolUser == 0){
         return true
       }

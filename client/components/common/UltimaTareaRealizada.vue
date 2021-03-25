@@ -1,7 +1,10 @@
 <template>
-  <v-icon small @click="evento">
-    mdi-download
-  </v-icon>
+  <div>
+        <v-icon 
+        @click="evento">
+          mdi-download
+        </v-icon>
+  </div>
 </template>
 
 <script>

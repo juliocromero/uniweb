@@ -104,8 +104,12 @@ export default {
       this.$emit('closeModal', value)
     },
      async cambiarPassword() {
+       const data = new FormData();
+        data.append('actual_password', this.datosPassword.actual_password);
+        data.append('new_password', this.datosPassword.new_password);
+        data.append('confirm_password', this.datosPassword.confirm_password);
      let token = Cookies.get("token");
-           await axios.put("change_pass",this.datosPassword,
+           await axios.put("change_pass",data,
            {headers: { Authorization: `Bearer ${token}` }})
            .then(res => {
              console.log('response',res)
@@ -115,6 +119,10 @@ export default {
                this.typeAlert = 'success'
                this.closeModal(false)
              }
+             else
+             {
+               this.typeAlert = 'error'
+             }
            })
            .catch(err => {
              console.log('response', err)
@@ -123,9 +131,11 @@ export default {
   },
   watch: {
     dialog(newVal){
-      if(newVal){
-        this.dialogPass = newVal
-      }
+      this.datosPassword.actual_password = '';
+      this.datosPassword.new_password = '';
+      this.datosPassword.confirm_password = '';
+      this.AlertCambioPassword = false
+      this.dialogPass = newVal
     }
   }
 };

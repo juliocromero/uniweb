@@ -25,7 +25,11 @@
                     </div>
 
                     <div class="input-file-wrap" v-if="item.img">
-                      <input class="file-input" type="file" />
+                      <v-file-input
+                      hide-input
+                      accept="image/*"
+                      @change="setImage"
+                      />
                     </div>
                   </v-col>
                 </v-row>
@@ -92,15 +96,6 @@
                   background-color="white"
                 ></v-text-field>
               </v-col>
-              <!--                  <v-col>
-                    <v-textarea
-                    v-model="item.descripcion"
-                    outlined
-                    label="Descripción"
-                    background-color="white"
-                    readonly
-                    ></v-textarea>
-                  </v-col> -->
             </v-row>
           </v-container>
           <v-container>
@@ -152,7 +147,7 @@
                       v-if="rolUser == 0"
                       :equipo="item"
                       :equipoID="$route.params.id"
-                      @click="getEquipo"
+                      @reload="reloadCambioEquipo"
                       class="ml-3"
                     />
                   </v-col>
@@ -504,7 +499,6 @@
       <v-card-actions class="d-flex justify-end">
         <v-col class="d-flex justify-end">
           <v-spacer></v-spacer>
-          <!-- <btn-pdf :equipo="item" /> -->
         </v-col>
       </v-card-actions>
     </v-card>
@@ -614,18 +608,9 @@ export default {
     }
   },
   computed:{
-    ...mapState('rolUser')
+    ...mapState(['rolUser'])
   },
   methods: {
-    formFecha(item){
-     
-     if(item){
-       let fecha = item.toString().slice(0, 10)
-       return fecha
-     }
-     return ''
-     
-    },
     getRutas() {
       try {
         const token = Cookies.get('token')
@@ -732,16 +717,20 @@ export default {
         this.$refs.cert.show()
       }
     },
-    certificar(certificado) {
-      return certificado
-    },
-    actualizarCertificado(item) {
-      item.certificado = true
-    },
     async filterByDate(desde, hasta) {
       this.desde = desde
       this.hasta = hasta
       this.getTareasRealizadas()
+    },
+    async limpiarFiltros() {
+      this.desde = null
+      this.hasta = null
+      this.$refs.Filtro.click()
+      this.filterByDate(null, null)
+    },
+    reloadCambioEquipo() {
+      this.getEquipo();
+      this.getEquipoAsignado();
     }
   },
   watch: {
