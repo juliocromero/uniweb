@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row style="background:#F9F9F9">
-      <v-col cols="12" md="4">
+      <v-col md="4">
         <v-menu
           ref="menu1"
           v-model="menu1"
@@ -12,6 +12,7 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
+              class="date-filter"
               v-model="date1"
               label="Desde"
               prepend-inner-icon="mdi-calendar"
@@ -25,19 +26,19 @@
               background-color="white"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="date1" no-title scrollable>
-<!--                     <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="menu1 = false">
-              Cancel
-            </v-btn>
-            <v-btn text color="primary" @click="$refs.menu1.save(date1)">
-              OK
-            </v-btn> -->
-          </v-date-picker>
+            <v-date-picker v-model="date1" no-title scrollable>
+    <!--                     <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu1 = false">
+                Cancel
+              </v-btn>
+              <v-btn text color="primary" @click="$refs.menu1.save(date1)">
+                OK
+              </v-btn> -->
+            </v-date-picker>
         </v-menu>
       </v-col>
 
-      <v-col cols="12" md="4">
+      <v-col  md="4">
         <v-menu
           ref="menu2"
           v-model="menu2"
@@ -49,6 +50,7 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
+              class="date-filter"
               v-model="date2"
               label="Hasta"
               prepend-inner-icon="mdi-calendar"
@@ -74,14 +76,14 @@
         </v-menu>
       </v-col>
 
-      <v-col cols="12" md="4" class="d-flex" v-if="!home" > 
+      <v-col  md="4" class="d-flex" v-if="!home" > 
         <v-btn color="grey darken-1" outlined height="40" width="40px" @click="filtrar">
           <div class="text-button-filter">
             <v-icon>filter_list</v-icon>
           </div>
         </v-btn>
       </v-col>
-      <v-col cols="12" md="4" class="" v-if="home" > 
+      <v-col v-if="home" md="4" class="" > 
         <v-btn color="grey darken-1" outlined height="40" width="100%" @click="filtrar">
           <div class="d-flex align-center">
             <v-icon>refresh</v-icon>
@@ -145,5 +147,11 @@ export default {
     white-space: initial;
     text-overflow: ellipsis;
     overflow: inherit;
+}
+.date-picker-filter{
+  max-width: 100%
+}
+.date-filter{
+  max-width: 280px;
 }
 </style>
