@@ -38,7 +38,7 @@
           keyboard_backspace
         </v-icon>
       </v-btn>
-      <span class="white--text ml-2"><strong>Equipos</strong></span>
+      <span class="white--text ml-2"><strong>{{Equipos}}</strong></span>
       
       <v-spacer />
 <div style="margin-right: 10px; color: white">{{userName}} [{{userRol}}]</div>
@@ -114,7 +114,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['rolUser']),
+    ...mapState(['rolUser','Equipos']),
     isRolUser(){      
       if(this.rolUser == 0){
         return true

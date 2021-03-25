@@ -1,155 +1,26 @@
 <template>
   <v-container>
     <v-card>
-      <v-container>
-        <v-row>
-          <v-col>
-            <v-card color="rgb(41, 83, 130)" dark class="mt-3">
-              <v-container class="py-0">
-                <v-row>
-                  <v-col cols="12" sm="8" class="pb-0">
-                    <v-card-title class="pt-0"> {{ item.tag }} </v-card-title>
-                    <v-card-subtitle class="pb-0">
-                      {{ item.descripcion }}
-                    </v-card-subtitle>
-                  </v-col>
-
-                  <v-col cols="12" sm="4" class="d-flex justify-end">
-                    <div class="input-file-wrap">
-                      <v-img
-                        style="border-radius: 7px"
-                        src="../indus.jpg"
-                        alt="No hay imagen"
-                        class="img"
-                      ></v-img>
-                    </div>
-
-                    <div class="input-file-wrap" v-if="item.img">
-                      <v-file-input
-                      hide-input
-                      accept="image/*"
-                      @change="setImage"
-                      />
-                    </div>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-
-      <v-container>
-        <v-card color="#FAFAFA">
-          <v-container>
-            <div class="overline">Detalle de Equipo</div>
-            <v-divider></v-divider>
-
-            <v-row class="mt-2">
-              <v-col cols="10">
-                <v-text-field
-                  v-model="item.tag"
-                  outlined
-                  dense
-                  disabled
-                  hide-details
-                  label="Tag"
-                  background-color="white"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="2" class="d-flex align-center">
-                <div>
-                  <v-checkbox
-                    v-model="item.serie_requerido"
-                    label="Serie"
-                    disabled
-                    hide-details
-                    class="mb=5"
-                  ></v-checkbox>
-                </div>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="item.fecha_creacion_equipo"
-                  prepend-inner-icon="mdi-calendar"
-                  prepend-icon
-                  disabled
-                  readonly
-                  outlined
-                  hide-details
-                  dense
-                  label="Fecha de Creación"
-                  background-color="white"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="item.fecha_update_equipo"
-                  prepend-inner-icon="mdi-calendar"
-                  prepend-icon
-                  disabled
-                  readonly
-                  outlined
-                  hide-details
-                  dense
-                  label="Fecha de Actualización"
-                  background-color="white"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-          <v-container>
-            <div class="overline">Sector del Equipo</div>
-            <v-divider></v-divider>
-
-            <v-row class="mt-2">
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="item.sector_name"
-                  outlined
-                  dense
-                  disabled
-                  hide-details
-                  label="Sector"
-                  background-color="white"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="item.sector_planta"
-                  outlined
-                  dense
-                  disabled
-                  hide-details
-                  label="Planta"
-                  background-color="white"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card>
-      </v-container>
-
       <v-container class="pt-0">
         <v-card color="#FAFAFA">
           <v-container>
             <v-row class="mt-2">
-              <v-col cols="12" sm="7">
+              <v-col cols="12">
                 <v-row>
                   <v-col class="d-flex pt-0">
                     <div
                       class="overline d-flex align-end"
                       style="padding-top: 8px"
                     >
-                      Instrumentos del Equipo
+                      Detalle Instrumento Patron
                     </div>
-                    <asignar-instrumento
+                    <!-- <asignar-instrumento
                       v-if="rolUser == 0"
                       :equipo="item"
                       :equipoID="$route.params.id"
                       @reload="reloadCambioEquipo"
                       class="ml-3"
-                    />
+                    /> -->
                   </v-col>
                 </v-row>
                 <v-divider></v-divider>
@@ -337,33 +208,6 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col cols="12" sm="5">
-                <v-row>
-                  <v-col cols="10" class="pt-2">
-                    <div class="overline">Asignaciones</div>
-                  </v-col>
-                  <v-spacer></v-spacer>
-                </v-row>
-                <v-divider></v-divider>
-                <v-card
-                  height="425"
-                  width="auto"
-                  flat
-                  style="border: 2px groove #d6d6d8"
-                  class="mt-3"
-                >
-                  <v-data-table
-                    :headers="headersEquiposAsignados"
-                    :items="equipoAsignado"
-                    hide-default-footer
-                    height="420"
-                  >
-                  <template v-slot="">
-
-                  </template>
-                  </v-data-table>
-                </v-card>
-              </v-col>
             </v-row>
           </v-container>
         </v-card>
@@ -515,7 +359,7 @@ import AsignarInstrumento from '~/components/common/AsignarInstrumento.vue'
 import AgregarCalibracion from '~/components/common/AgregarCalibracion.vue'
 import CargarTareaCalibracionRealizada from '~/components/common/CargarTareaCalibracionRealizada.vue'
 import download from 'downloadjs'
-import {mapState , mapMutations} from 'vuex'
+import {mapState, mapMutations} from 'vuex'
 
 export default {
   middleware: 'NOAUTH',
@@ -536,7 +380,7 @@ export default {
       hasta: null,
       equipoAsignado: [],
       listRutas: [],
-      token: Cookies.get('token'),
+     token: Cookies.get('token'),
       item: {
         fecha_creacion_equipo: '',
         fecha_update_equipo: '',
@@ -743,7 +587,7 @@ export default {
     }
   },
   mounted() {
-    this.GET_NAME_INSTRUMENTO('Equipo')
+    this.GET_NAME_INSTRUMENTO('Patron')
     this.paramsId = this.$route.params.id
     this.getRutas()
     this.getEquipo()

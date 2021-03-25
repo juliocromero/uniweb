@@ -4,6 +4,7 @@ import axios from "../plugins/axios";
 
 export const state = () => ({
   rolUser: null,
+  Equipos: 'Equipos',
   infoModal:{
     dialog: false,
     msj:"",
@@ -21,6 +22,9 @@ export const getters = {
   }
 }
 export const mutations = {
+  async GET_NAME_INSTRUMENTO(state, val){
+    state.Equipos = val
+  },
   async SET_AUTH(state, res) {
     console.log('set auth',res)
     state.auth = true;  
