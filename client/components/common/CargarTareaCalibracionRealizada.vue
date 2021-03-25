@@ -122,7 +122,8 @@ import moment from 'moment';
 
 export default {
    props: {
-      calibracion_tarea_id: 1
+      calibracion_tarea_id: 1,
+      user_id_for_admin: null
   }, 
 
   watch: {
@@ -201,7 +202,7 @@ export default {
         try {
           axios.get('list-instrumentos-patron', {
             headers: { Authorization: `Bearer ${this.token}` },
-            params: { fecha: this.tarea.fecha }
+            params: { fecha: this.tarea.fecha, userIdIn: this.user_id_for_admin }
           })
           .then((res)=>{
             this.instrumentosPatron = [];

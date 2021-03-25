@@ -261,7 +261,7 @@ export default {
    getInstrumentList(){
     try {
         axios.get('instrumentoslist', {
-          headers: { Authorization: `Bearer ${this.token}` },
+          headers: { Authorization: `Bearer ${this.token}` }
         })
         .then((res)=>{
           for (const item of res.data.data) {

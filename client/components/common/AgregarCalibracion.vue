@@ -26,12 +26,6 @@
             <v-card-text>
               <v-form ref="form" lazy-validation v-model="valid">
                 <v-container>
-<!--                   <v-row>
-                    <v-col cols="12">
-                      <h3>Modelo:{{instrumento.instrumento_modelo}}</h3>
-                      <h3>Marca:{{instrumento.instrumento_marca}}</h3>
-                    </v-col>
-                  </v-row> -->
 
                   <v-row>
                     <v-col cols="12">
@@ -152,8 +146,8 @@ export default {
               this.alertMsg = "Se agregó una nueva tarea de calibración"
               this.alerType = "success"
               this.alertShow = true;
-              this.$refs.form.reset();
               this.$emit('click');
+              this.hide();
             }) 
       }
       } catch (error) {

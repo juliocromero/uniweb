@@ -401,10 +401,11 @@
                     hide-default-footer
                     height="515"
                   >
-                    <template v-slot:[`item.cargar`]>
+                    <template v-slot:[`item.acciones`]>
                       <cargar-tarea-calibracion-realizada
                         :calibracion_tarea_id="item.num_tarea"
                         @click="getTareasRealizadas"
+                        :user_id_for_admin="item.instrumento_encargado_id"
                       />
                     </template>
                   </v-data-table>
@@ -569,6 +570,7 @@ export default {
         serie_requerido: null,
         tag: '',
         tipo_instrumento: '',
+        userID: null
       },
       headersEquiposAsignados: [
         { text: 'Equipo', align: 'start', value: 'equipo' },
@@ -598,7 +600,7 @@ export default {
           align: 'center',
           value: 'calibracion_tarea_proxima',
         },
-        { text: 'Cargar', align: 'center', value: 'cargar' },
+        { text: 'Acciones', value: 'acciones', sortable: false, align: 'start'},
       ],
       tareasCalibracion: [],
       tareasRealizadas: [],
