@@ -401,14 +401,15 @@
                     hide-default-footer
                     height="515"
                   >
-                    <template v-slot:[`item.acciones`]>
-                      {{tareasCalibracion}}
+                    <template v-slot:[`item.acciones`]="item">
                       <div class="d-flex">
                          <editar-tarea-calibracion
                         class="mr-2"
+                        :calibracionItem="item.item"
                         :calibracion_tarea_id="item.num_tarea"
                         @click="getTareasRealizadas"
                         :user_id_for_admin="item.instrumento_encargado_id"
+                        @reload="GetRealoadItems"
                       />
                       <cargar-tarea-calibracion-realizada
                         :calibracion_tarea_id="item.num_tarea"
@@ -628,6 +629,9 @@ export default {
   },
   methods: {
     ...mapMutations(['GET_NAME_INSTRUMENTO']),
+    GetRealoadItems(){
+      this.getEquipo()
+    },
     getRutas() {
       try {
         const token = Cookies.get('token')
