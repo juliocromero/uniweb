@@ -106,7 +106,7 @@
                       <v-text-field
                       v-model="instrumento.rango_de" 
                       label="Rango de"
-                      :rules="rules"
+                      
                       >
                       </v-text-field>
                     </v-col>
@@ -133,7 +133,6 @@
                       <v-text-field 
                       v-model="instrumento.rango_normal_a"
                       label="Rango normal a"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>

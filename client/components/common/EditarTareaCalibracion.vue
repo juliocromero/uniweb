@@ -2,17 +2,13 @@
   <div class="d-flex justify-end">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              depressed
-              x-small
-              height="30"
-              color="info"
+            <v-icon
               v-bind="attrs"
               v-on="on"
               @click="dialog = true"
             >
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
+              mdi-pencil
+            </v-icon>
           </template>
           <span>Agregar Tarea</span>
         </v-tooltip>
@@ -51,7 +47,7 @@
                   </v-row>
                   
 
-                  <v-row>
+                 <!-- <v-row>
                     <v-col cols="12">
 
                       <v-card class="pa-5">
@@ -70,7 +66,7 @@
                       </v-card>
 
                     </v-col>
-                  </v-row>
+                  </v-row>-->
                   <!-- Modal status http request -->
                   <v-row v-if="alertShow">
                     <v-col cols="12" class="px-0">

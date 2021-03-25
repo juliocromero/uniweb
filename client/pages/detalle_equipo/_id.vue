@@ -402,11 +402,21 @@
                     height="515"
                   >
                     <template v-slot:[`item.acciones`]>
-                      <cargar-tarea-calibracion-realizada
+                      <div class="d-flex">
+                         <editar-tarea-calibracion
+                        class="mr-2"
                         :calibracion_tarea_id="item.num_tarea"
                         @click="getTareasRealizadas"
                         :user_id_for_admin="item.instrumento_encargado_id"
                       />
+                      <cargar-tarea-calibracion-realizada
+                        :calibracion_tarea_id="item.num_tarea"
+                        @click="getTareasRealizadas"
+                         class="mr-2"
+                        :user_id_for_admin="item.instrumento_encargado_id"
+                      />
+                      
+                      </div>
                     </template>
                   </v-data-table>
                 </v-card>
@@ -513,6 +523,8 @@ import Cookies from 'js-cookie'
 import Filtro from '@/components/public/Filtro'
 import AgregarCertificado from '~/components/common/AgregarCertificado.vue'
 import AsignarInstrumento from '~/components/common/AsignarInstrumento.vue'
+
+import EditarTareaCalibracion from '~/components/common/EditarTareaCalibracion.vue'
 import AgregarCalibracion from '~/components/common/AgregarCalibracion.vue'
 import CargarTareaCalibracionRealizada from '~/components/common/CargarTareaCalibracionRealizada.vue'
 import download from 'downloadjs'
@@ -526,7 +538,8 @@ export default {
     AgregarCertificado,
     AgregarCalibracion,
     CargarTareaCalibracionRealizada,
-    AsignarInstrumento
+    AsignarInstrumento,
+    EditarTareaCalibracion
   },
   layout: 'equipo',
   data() {
