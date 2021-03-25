@@ -402,6 +402,7 @@
                     height="515"
                   >
                     <template v-slot:[`item.acciones`]>
+                      {{tareasCalibracion}}
                       <div class="d-flex">
                          <editar-tarea-calibracion
                         class="mr-2"

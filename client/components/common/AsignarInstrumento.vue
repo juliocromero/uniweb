@@ -55,7 +55,7 @@
                       <v-text-field 
                       v-model="instrumento.marca"
                       label="Marca"
-                      :disabled="manual"  
+                      disabled  
                       >
                       </v-text-field>
                     </v-col>
@@ -63,7 +63,7 @@
                       <v-text-field 
                       v-model="instrumento.modelo"
                       label="Modelo"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-text-field>
                     </v-col>
@@ -74,7 +74,7 @@
                       <v-text-field 
                       v-model="instrumento.serie"
                       label="Serie"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-text-field>
                     </v-col>
@@ -83,7 +83,7 @@
                       v-model="instrumento.tipo_id"
                       label="Tipo"
                       :items="instrumentosTipo"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-autocomplete>
                     </v-col>
@@ -94,7 +94,7 @@
                       <v-text-field 
                       v-model="instrumento.resolucion"
                       label="Resolución"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-text-field>
                     </v-col>
@@ -102,7 +102,7 @@
                       <v-text-field
                       v-model="instrumento.tolerancia" 
                       label="Tolerancia"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-text-field>
                     </v-col>
@@ -115,7 +115,7 @@
                       v-model="instrumento.unidad_id"
                       label="Unidad"
                       :items="instrumentoUnidad"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-autocomplete>
                     </v-col>
@@ -124,7 +124,7 @@
                       v-model="instrumento.magnitud_id"
                       label="Magnitud"
                       :items="instrumentoMagnitud"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-autocomplete>
                     </v-col>
@@ -135,7 +135,7 @@
                       <v-text-field
                       v-model="instrumento.rango_de" 
                       label="Rango DE"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-text-field>
                     </v-col>
@@ -143,7 +143,7 @@
                       <v-text-field 
                       v-model="instrumento.rango_a"
                       label="Rango A"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-text-field>
                     </v-col>
@@ -154,7 +154,7 @@
                       <v-text-field 
                       v-model="instrumento.rango_normal_de"
                       label="Rango Normal DE"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-text-field>
                     </v-col>
@@ -162,7 +162,7 @@
                       <v-text-field 
                       v-model="instrumento.rango_normal_a"
                       label="Rango Normal A"
-                      :disabled="manual"
+                      disabled
                       >
                       </v-text-field>
                     </v-col>

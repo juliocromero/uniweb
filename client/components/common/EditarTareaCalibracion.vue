@@ -10,13 +10,13 @@
               mdi-pencil
             </v-icon>
           </template>
-          <span>Agregar Tarea</span>
+          <span>Editar Tarea</span>
         </v-tooltip>
 
         <v-dialog v-model="dialog" width="500">
           <v-card>
             <v-card-title class="headline white--text blue darken-4">
-              Agregar Nueva Tarea
+              Editar Tarea
             </v-card-title>
 
             <v-card-text>
