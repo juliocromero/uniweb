@@ -191,9 +191,6 @@
               <v-btn v-if="manual" color="primary" text @click="asignar">
                 Asignar Instrumento
               </v-btn>
-              <v-btn v-if="!manual" color="primary" text @click="asignar">
-                Asignar Instrumento Nuevo
-              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -320,6 +317,7 @@ export default {
       this.getUnidad();
       this.getMagnitud();
       this.getInstrumentoTipo();
+      this.instrumentosDisponibles = [];
       this.getInstrumentList();
       this.dialog = true;
     },

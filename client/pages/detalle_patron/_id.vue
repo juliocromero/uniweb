@@ -12,22 +12,15 @@
                       class="overline d-flex align-end"
                       style="padding-top: 8px"
                     >
-                      Detalle Instrumento Patron
+                      Detalle
                     </div>
-                    <!-- <asignar-instrumento
-                      v-if="rolUser == 0"
-                      :equipo="item"
-                      :equipoID="$route.params.id"
-                      @reload="reloadCambioEquipo"
-                      class="ml-3"
-                    /> -->
                   </v-col>
                 </v-row>
                 <v-divider></v-divider>
                 <v-row class="mt-3">
                   <v-col cols="6">
                     <v-text-field
-                      v-model="item.instrumento_marca"
+                      v-model="item.marca"
                       outlined
                       dense
                       disabled
@@ -39,7 +32,7 @@
 
                   <v-col cols="6">
                     <v-text-field
-                      v-model="item.instrumento_modelo"
+                      v-model="item.modelo"
                       outlined
                       dense
                       disabled
@@ -52,7 +45,7 @@
                 <v-row>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="item.instrumento_resolucion"
+                      v-model="item.resolucion"
                       outlined
                       dense
                       disabled
@@ -63,7 +56,7 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="item.instrumento_tolerancia"
+                      v-model="item.tolerancia"
                       outlined
                       dense
                       disabled
@@ -76,7 +69,7 @@
                 <v-row>
                   <v-col cols="6">
                     <v-text-field
-                      v-model="item.instrumento_serie"
+                      v-model="item.serie"
                       outlined
                       dense
                       disabled
@@ -87,12 +80,12 @@
                   </v-col>
                   <v-col cols="6">
                     <v-text-field
-                      v-model="item.tipo_instrumento"
+                      v-model="item.tipo"
                       outlined
                       dense
                       disabled
                       hide-details
-                      label="Tipo de Instrumento"
+                      label="Tipo de instrumento"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
@@ -100,7 +93,7 @@
                 <v-row>
                   <v-col cols="6">
                     <v-text-field
-                      v-model="item.instrumento_unidad"
+                      v-model="item.unidad"
                       outlined
                       dense
                       disabled
@@ -111,7 +104,7 @@
                   </v-col>
                   <v-col cols="6">
                     <v-text-field
-                      v-model="item.instrumento_magnitud"
+                      v-model="item.magnitud"
                       outlined
                       dense
                       disabled
@@ -124,7 +117,7 @@
                 <v-row>
                   <v-col cols="6">
                     <v-text-field
-                      v-model="item.instrumento_creado_usuario"
+                      v-model="item.creador"
                       outlined
                       dense
                       disabled
@@ -135,7 +128,7 @@
                   </v-col>
                   <v-col cols="6">
                     <v-text-field
-                      v-model="item.instrumento_encargado_calibracion"
+                      v-model="item.encargado_calibracion"
                       outlined
                       dense
                       disabled
@@ -148,45 +141,45 @@
                 <v-row>
                   <v-col cols="3" sm="3">
                     <v-text-field
-                      v-model="item.instrumento_rango_de"
+                      v-model="item.rango_de"
                       outlined
                       dense
                       disabled
                       hide-details
-                      label="Rango_d"
+                      label="Rango de"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="3" sm="3">
                     <v-text-field
-                      v-model="item.instrumento_rango_a"
+                      v-model="item.rango_a"
                       outlined
                       dense
                       disabled
                       hide-details
-                      label="Rango_a"
+                      label="Rango a"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="3" sm="3">
                     <v-text-field
-                      v-model="item.instrumento_rango_normal_de"
+                      v-model="item.rango_normal_de"
                       outlined
                       dense
                       disabled
                       hide-details
-                      label="Rango_d Normal"
+                      label="Rango normal de"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="3" sm="3">
                     <v-text-field
-                      v-model="item.instrumento_rango_normal_a"
+                      v-model="item.rango_normal_a"
                       outlined
                       dense
                       disabled
                       hide-details
-                      label="Rango_a Normal"
+                      label="Rango normal a"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
@@ -194,7 +187,7 @@
                 <v-row>
                   <v-col cols="12">
                     <v-text-field
-                      v-model="item.instrumento_update"
+                      v-model="item.updated_at"
                       prepend-inner-icon="mdi-calendar"
                       prepend-icon
                       disabled
@@ -202,7 +195,7 @@
                       outlined
                       hide-details
                       dense
-                      label="Fecha de Actualización"
+                      label="Fecha de actualización"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
@@ -221,12 +214,11 @@
                 <v-row>
                   <v-col class="d-flex pr-1">
                     <div class="overline" style="padding-top: 8px">
-                      Tareas de Calibración
+                      Tareas de calibración
                     </div>
                     <agregar-calibracion
-                      v-if="rolUser == 0"
-                      :instrumento="item"
-                      @click="getEquipo"
+                      :instrumento_id="item.id"
+                      @click="getInstrumento"
                       class="ml-3"
                     />
                   </v-col>
@@ -245,9 +237,9 @@
                     hide-default-footer
                     height="515"
                   >
-                    <template v-slot:[`item.cargar`]>
-                      <cargar-tarea-calibracion-realizada
-                        :calibracion_tarea_id="item.num_tarea"
+                    <template v-slot:[`item.acciones`]="{ item }">
+                      <cargar-tarea-calibracion-realizada-patron
+                        :calibracion_tarea_id="item.id"
                         @click="getTareasRealizadas"
                       />
                     </template>
@@ -288,31 +280,6 @@
                     height="360"
                   >
                  
-                    <template v-slot:[`item.patron`]="{ item }">
-                      <template  v-if="!item.patron_isString">
-                        <v-tooltip bottom v-for="it in item.patron" :key="it.idCert">
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                              v-on="on"
-                              v-bind="attrs"
-                              text
-                              small
-                              color="info"
-                              @click="getCertificado(it.idCert, it.certName)"
-                              target="_blank"
-                              download
-                            >
-                              {{ it.certName }}</v-btn
-                            >
-                          </template>
-                          <span>Descargar Certificado</span>
-                        </v-tooltip>
-                      </template>
-                      <template  v-if="item.patron_isString">
-                        {{item.patron}}
-                      </template>
-                    </template>
-
                     <template v-slot:[`item.certificado`]="{ item }">
                       <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
@@ -357,7 +324,7 @@ import Filtro from '@/components/public/Filtro'
 import AgregarCertificado from '~/components/common/AgregarCertificado.vue'
 import AsignarInstrumento from '~/components/common/AsignarInstrumento.vue'
 import AgregarCalibracion from '~/components/common/AgregarCalibracion.vue'
-import CargarTareaCalibracionRealizada from '~/components/common/CargarTareaCalibracionRealizada.vue'
+import CargarTareaCalibracionRealizadaPatron from '~/components/common/CargarTareaCalibracionRealizadaPatron.vue'
 import download from 'downloadjs'
 import {mapState, mapMutations} from 'vuex'
 
@@ -368,7 +335,7 @@ export default {
     Filtro,
     AgregarCertificado,
     AgregarCalibracion,
-    CargarTareaCalibracionRealizada,
+    CargarTareaCalibracionRealizadaPatron,
     AsignarInstrumento
   },
   layout: 'equipo',
@@ -381,68 +348,29 @@ export default {
       equipoAsignado: [],
       listRutas: [],
      token: Cookies.get('token'),
-      item: {
-        fecha_creacion_equipo: '',
-        fecha_update_equipo: '',
-        calibracion_tarea_frecuencia: null,
-        calibracion_tarea_id: null,
-        calibracion_tarea_proxima: '',
-        calibracion_tarea_tipo: '',
-        calibracion_tarea_ult_efectuada: '',
-        descripcion: '',
-        id: null,
-        instrumento_creado_usuario: '',
-        instrumento_create: '',
-        instrumento_encargado_calibracion: '',
-        instrumento_magnitud: '',
-        instrumento_marca: '',
-        instrumento_modelo: '',
-        instrumento_rango_a: null,
-        instrumento_rango_de: null,
-        instrumento_rango_normal_de: '',
-        instrumento_rango_normal_a: '',
-        instrumento_resolucion: null,
-        instrumento_serie: '',
-        instrumento_tolerancia: null,
-        instrumento_unidad: '',
-        instrumento_update: '',
-        instrumento_estado: '',
-        instrumento_id: '',
-        sector_name: '',
-        sector_planta: '',
-        serie_requerido: null,
-        tag: '',
-        tipo_instrumento: '',
-      },
-      headersEquiposAsignados: [
-        { text: 'Equipo', align: 'start', value: 'equipo' },
-        { text: 'Instrumento', value: 'instrumento' },
-        { text: 'Desde', value: 'desde' },
-        { text: 'Hasta', value: 'hasta' },
-      ],
+      item: {},
       headersCertificados: [
-        { text: 'Tarea', align: 'start', value: 'Num_tarea' },
-        { text: 'Instrumento', value: 'intrumento' },
-        { text: ' Fecha Realización', value: 'fecha' },
-        { text: 'Encargado', value: 'realizo' },
-        { text: 'Patrón', value: 'patron' },
-        { text: 'Certificado', align: 'center', value: 'certificado' },
+        { text: 'Tarea', align: 'start', sortable: false, value: 'num_tarea' },
+        { text: 'Instrumento', sortable: false, value: 'instrumento' },
+        { text: ' Fecha Realización', sortable: false, value: 'fecha' },
+        { text: 'Encargado', sortable: false, value: 'realizo' },
+        { text: 'Certificado', sortable: false, align: 'center', value: 'certificado' },
       ],
       headersTareasCalibracion: [
-        { text: 'N°', align: 'start', value: 'num_tarea' },
+        { text: 'N°', align: 'start', value: 'id' },
         {
           text: 'Tipo de Calibración',
           align: 'start',
-          value: 'calibracion_tarea_tipo',
+          value: 'tipo.nombre',
         },
-        { text: 'Frecuencia', value: 'calibracion_tarea_frecuencia' },
-        { text: 'Ultima Efectuada', value: 'calibracion_tarea_ult_efectuada' },
+        { text: 'Frecuencia', value: 'frecuencia' },
+        { text: 'Ultima Efectuada', value: 'ult_efectuado' },
         {
           text: 'Proxima Calibracion',
           align: 'center',
-          value: 'calibracion_tarea_proxima',
+          value: 'proxima',
         },
-        { text: 'Cargar', align: 'center', value: 'cargar' },
+        { text: 'Acciones', align: 'center', value: 'acciones' },
       ],
       tareasCalibracion: [],
       tareasRealizadas: [],
@@ -456,61 +384,19 @@ export default {
   },
   methods: {
     ...mapMutations(['GET_NAME_INSTRUMENTO']),
-    getRutas() {
-      try {
-        const token = Cookies.get('token')
-
-        axios
-          .get('sector', {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .then((res) => {
-            this.listRutas = res.data.listRutas
-
-            console.log(this.listRutas)
-          })
-      } catch (error) {
-        console.log('Error al traer rutas')
-      }
-    },
-    async getEquipo() {
+    async getInstrumento() {
       try {
         const token = Cookies.get('token')
 
         await axios
-          .get(`equipo/${this.paramsId}`, {
+          .get(`instrumento-patron/${this.paramsId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => {
 
-            this.item = res.data.data[0].detalleEquipos
-
-            var auxRuta = this.listRutas.find(
-              (el) => el.i == this.item.sector_id
-            )
-
-            if (auxRuta !== undefined) {
-              this.item.sector_name = auxRuta.ruta
-            } else {
-              this.item.sector_name = 'Error en ruta'
-            }
-
-            this.tareasCalibracion = res.data.data[0].calibracion
-          })
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    async getEquipoAsignado() {
-      try {
-        const token = Cookies.get('token')
-        await axios
-          .get(`EquipoAsignado/${this.paramsId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .then((res) => {
-            console.log('resEquipoAsignado:', res.data.data)
-            this.equipoAsignado = res.data.data
+            this.item = res.data.data;
+            console.log(this.item)
+            this.tareasCalibracion = this.item.tareaCalibracion;
           })
       } catch (error) {
         console.log(error)
@@ -522,9 +408,9 @@ export default {
       try {
         this.loadingCertificados = true;
         await axios
-          .get('TareaRealizada', {
+          .get('certificados-patron', {
             headers: { Authorization: `Bearer ${token}` },
-            params: { equipoID: this.$route.params.id,
+            params: { instrumentoID: this.$route.params.id,
             desde: this.desde,
             hasta: this.hasta,
             options: this.optionsCertificados }
@@ -557,11 +443,6 @@ export default {
         alert(await error.response.data.text())
       }
     },
-    show(item) {
-      if (item.certificado == 'false') {
-        this.$refs.cert.show()
-      }
-    },
     async filterByDate(desde, hasta) {
       this.desde = desde
       this.hasta = hasta
@@ -572,10 +453,6 @@ export default {
       this.hasta = null
       this.$refs.Filtro.click()
       this.filterByDate(null, null)
-    },
-    reloadCambioEquipo() {
-      this.getEquipo();
-      this.getEquipoAsignado();
     }
   },
   watch: {
@@ -587,12 +464,10 @@ export default {
     }
   },
   mounted() {
-    this.GET_NAME_INSTRUMENTO('Patron')
+    this.GET_NAME_INSTRUMENTO('Patrón')
     this.paramsId = this.$route.params.id
-    this.getRutas()
-    this.getEquipo()
-    this.getEquipoAsignado()
-    this.getTareasRealizadas();
+    this.getInstrumento();
+    //this.getTareasRealizadas();
   },
 }
 </script>

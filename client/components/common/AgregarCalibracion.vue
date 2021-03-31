@@ -106,12 +106,7 @@
 import axios from '~/plugins/axios';
 import Cookies from 'js-cookie';
 export default {
-  props:{
-    instrumento:{
-      type: Object,
-      required: true
-    }
-  },
+  props:['instrumento_id'],
   data() {
     return {
       picker: new Date().toISOString().substr(0, 10),
@@ -136,8 +131,9 @@ export default {
       const obj = this.tarea;
       try {
         if(this.$refs.form.validate()){
-          this.tarea.instrumento_id = this.instrumento.instrumento_id;
           
+          this.tarea.instrumento_id = this.instrumento_id;
+
          await axios.post('calibracion', this.tarea ,{
               headers: { Authorization: `Bearer ${this.token}` },
             })
@@ -177,7 +173,7 @@ export default {
         }
 },
   created(){
- this.getCalibracionTipo();
+    this.getCalibracionTipo();
   }
 }
 </script>

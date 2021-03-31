@@ -8,7 +8,15 @@
               <v-container class="py-0">
                 <v-row>
                   <v-col cols="12" sm="8" class="pb-0">
-                    <v-card-title class="pt-0"> {{ item.tag }} </v-card-title>
+                    <v-card-title class="pt-0"> 
+                      {{ item.tag }} 
+                      <v-chip
+                      style="margin-left: 10px"
+                      :color="estadoColor"
+                      >
+                        {{estadoText}}
+                    </v-chip>
+                    </v-card-title>
                     <v-card-subtitle class="pb-0">
                       {{ item.descripcion }}
                     </v-card-subtitle>
@@ -141,7 +149,7 @@
                       class="overline d-flex align-end"
                       style="padding-top: 8px"
                     >
-                      Instrumentos del Equipo
+                      Instrumento del Equipo
                     </div>
                     <asignar-instrumento
                       v-if="rolUser == 0"
@@ -149,6 +157,11 @@
                       :equipoID="$route.params.id"
                       @reload="reloadCambioEquipo"
                       class="ml-3"
+                    />
+                     <archivos
+                     :equipo="item"
+                     style="margin-left: 2px"
+                     class="ml-3"
                     />
                   </v-col>
                 </v-row>
@@ -269,7 +282,7 @@
                       dense
                       disabled
                       hide-details
-                      label="Encargado de Calibración"
+                      label="Encargado de calibración"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
@@ -282,7 +295,7 @@
                       dense
                       disabled
                       hide-details
-                      label="Rango_d"
+                      label="Rango de"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
@@ -293,7 +306,7 @@
                       dense
                       disabled
                       hide-details
-                      label="Rango_a"
+                      label="Rango a"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
@@ -304,7 +317,7 @@
                       dense
                       disabled
                       hide-details
-                      label="Rango_d Normal"
+                      label="Rango normal de"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
@@ -315,7 +328,7 @@
                       dense
                       disabled
                       hide-details
-                      label="Rango_a Normal"
+                      label="Rango normal a"
                       background-color="white"
                     ></v-text-field>
                   </v-col>
@@ -356,6 +369,7 @@
                     :headers="headersEquiposAsignados"
                     :items="equipoAsignado"
                     hide-default-footer
+                    disable-pagination
                     height="420"
                   >
                   <template v-slot="">
@@ -381,7 +395,7 @@
                     </div>
                     <agregar-calibracion
                       v-if="rolUser == 0"
-                      :instrumento="item"
+                      :instrumento_id="item.instrumento_id"
                       @click="getEquipo"
                       class="ml-3"
                     />
@@ -401,21 +415,32 @@
                     hide-default-footer
                     height="515"
                   >
+
+                    <template v-slot:[`item.calibracion_tarea_proxima`]="{ item }">
+                      <v-chip
+                      :color="setColorEstado(item)"
+                      text-color="white"
+                      >
+                        {{item.calibracion_tarea_proxima}}
+                      </v-chip>
+                    </template>
+
                     <template v-slot:[`item.acciones`]="item">
                       <div class="d-flex">
                          <editar-tarea-calibracion
+                         v-if="rolUser == 0"
                         class="mr-2"
                         :calibracionItem="item.item"
-                        :calibracion_tarea_id="item.num_tarea"
+                        :calibracion_tarea_id="item.item.num_tarea"
                         @click="getTareasRealizadas"
-                        :user_id_for_admin="item.instrumento_encargado_id"
+                        :user_id_for_admin="encargadoID"
                         @reload="GetRealoadItems"
                       />
                       <cargar-tarea-calibracion-realizada
-                        :calibracion_tarea_id="item.num_tarea"
+                        :calibracion_tarea_id="item.item.num_tarea"
+                        :user_id_for_admin="encargadoID"
                         @click="getTareasRealizadas"
-                         class="mr-2"
-                        :user_id_for_admin="item.instrumento_encargado_id"
+                        class="mr-2"
                       />
                       
                       </div>
@@ -525,11 +550,12 @@ import Cookies from 'js-cookie'
 import Filtro from '@/components/public/Filtro'
 import AgregarCertificado from '~/components/common/AgregarCertificado.vue'
 import AsignarInstrumento from '~/components/common/AsignarInstrumento.vue'
-
+import Archivos from '~/components/common/Archivos.vue'
 import EditarTareaCalibracion from '~/components/common/EditarTareaCalibracion.vue'
 import AgregarCalibracion from '~/components/common/AgregarCalibracion.vue'
 import CargarTareaCalibracionRealizada from '~/components/common/CargarTareaCalibracionRealizada.vue'
 import download from 'downloadjs'
+import moment from 'moment'
 import {mapState , mapMutations} from 'vuex'
 
 export default {
@@ -541,7 +567,8 @@ export default {
     AgregarCalibracion,
     CargarTareaCalibracionRealizada,
     AsignarInstrumento,
-    EditarTareaCalibracion
+    EditarTareaCalibracion,
+    Archivos
   },
   layout: 'equipo',
   data() {
@@ -550,6 +577,9 @@ export default {
       equipo: [],
       desde: null,
       hasta: null,
+      encargadoID: null,
+      estadoText: 'Sin estado',
+      estadoColor: 'gray',
       equipoAsignado: [],
       listRutas: [],
       token: Cookies.get('token'),
@@ -594,28 +624,28 @@ export default {
         { text: 'Hasta', value: 'hasta' },
       ],
       headersCertificados: [
-        { text: 'Tarea', align: 'start', value: 'Num_tarea' },
-        { text: 'Instrumento', value: 'intrumento' },
-        { text: ' Fecha Realización', value: 'fecha' },
-        { text: 'Encargado', value: 'realizo' },
-        { text: 'Patrón', value: 'patron' },
-        { text: 'Certificado', align: 'center', value: 'certificado' },
+        { text: 'Tarea', align: 'start', value: 'Num_tarea', sortable: false },
+        { text: 'Instrumento', sortable: false, value: 'intrumento' },
+        { text: ' Fecha Realización', sortable: false, value: 'fecha' },
+        { text: 'Encargado', sortable: false, value: 'realizo' },
+        { text: 'Patrón', sortable: false, value: 'patron' },
+        { text: 'Certificado', sortable: false, align: 'center', value: 'certificado' },
       ],
       headersTareasCalibracion: [
         { text: 'N°', align: 'start', value: 'num_tarea' },
         {
           text: 'Tipo de Calibración',
-          align: 'start',
+          align: 'center',
           value: 'calibracion_tarea_tipo',
         },
-        { text: 'Frecuencia', value: 'calibracion_tarea_frecuencia' },
-        { text: 'Ultima Efectuada', value: 'calibracion_tarea_ult_efectuada' },
+        { text: 'Frecuencia', value: 'calibracion_tarea_frecuencia', align: 'center' },
+        { text: 'Ultima Efectuada', value: 'calibracion_tarea_ult_efectuada', align: 'center' },
         {
           text: 'Proxima Calibracion',
           align: 'center',
           value: 'calibracion_tarea_proxima',
         },
-        { text: 'Acciones', value: 'acciones', sortable: false, align: 'start'},
+        { text: 'Acciones', value: 'acciones', sortable: false, align: 'center'},
       ],
       tareasCalibracion: [],
       tareasRealizadas: [],
@@ -631,6 +661,15 @@ export default {
     ...mapMutations(['GET_NAME_INSTRUMENTO']),
     GetRealoadItems(){
       this.getEquipo()
+    },
+    setColorEstado(item) {
+      if (moment().isAfter(item.calibracion_tarea_proxima)) {
+        return 'red'
+      }
+      else
+      {
+        return 'green'
+      }
     },
     getRutas() {
       try {
@@ -660,6 +699,7 @@ export default {
           .then((res) => {
 
             this.item = res.data.data[0].detalleEquipos
+            this.encargadoID = this.item.instrumento_encargado_id;
 
             var auxRuta = this.listRutas.find(
               (el) => el.i == this.item.sector_id
@@ -669,6 +709,22 @@ export default {
               this.item.sector_name = auxRuta.ruta
             } else {
               this.item.sector_name = 'Error en ruta'
+            }
+
+            this.estadoText = this.item.instrumento_estado;
+
+            switch (this.item.instrumento_estado_id) {
+              case 2:
+                this.estadoColor = 'green'
+                break;
+
+              case 3:
+                this.estadoColor = 'red'
+                break;
+            
+              default:
+                this.estadoColor = 'gray'
+                break;
             }
 
             this.tareasCalibracion = res.data.data[0].calibracion
@@ -714,6 +770,7 @@ export default {
       }
       finally {
         this.loadingCertificados = false;
+        this.getEquipo();
       }
     },
     async getCertificado(id, nombreArchivo) {
@@ -774,6 +831,14 @@ export default {
 </script>
 
 <style scoped>
+.style-vencido {
+  background-color: rgb(215,215,44)
+}
+
+.style-normal {
+  background-color: rgb(255,255,255)
+}
+
 .img {
   width: 245px;
   height: 145px;

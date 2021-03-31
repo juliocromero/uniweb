@@ -53,10 +53,10 @@
               Cambiar Contraseña
             </v-list-item-title>
           </v-list-item>
-           <v-list-item  v-if="isRolUser" class="menuUser poiter" to="/admin" >
+           <v-list-item  v-if="isRolUser" class="menuUser poiter" to="/Panel" >
             <v-list-item-title>
               <v-icon left color="#295382" >settings</v-icon>
-              Adm. Usuarios
+              Panel De Control
             </v-list-item-title>
           </v-list-item>
           <v-list-item class="menuUser poiter">

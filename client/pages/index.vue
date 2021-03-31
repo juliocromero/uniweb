@@ -72,7 +72,7 @@
                   >
                     Limpiar Filtros
                   </v-btn>
-                  <agregar-equipo @click="getDataTable" />
+                  <agregar-equipo @click="getDataTable" v-if="isRolUser"/>
                 </v-toolbar>
               </template>
 
@@ -93,6 +93,15 @@
                     <span>Ver Detalle</span>
                   </v-tooltip>
                 </nuxt-link>
+              </template>
+
+              <template v-slot:[`item.estadoName`]="{ item }">
+                <v-chip
+                :color="setColorEstado(item)"
+                text-color="white"
+                >
+                  {{item.estadoName}}
+                </v-chip>
               </template>
 
               <template v-slot:[`item.acciones`]="{ item }">
@@ -177,12 +186,12 @@ export default {
     },
     headers: [
       { text: 'Tag', align: 'start', value: 'tag' },
-      { text: 'Descripción', value: 'descripcion' },
-      { text: 'Sector', value: 'sectorName' },
-      { text: 'Estado', value: 'estadoName' },
-      { text: 'Próxima', value: 'proximaCalib' },
-      { text: 'Encargado', value: 'empresa' },
-      { text: 'Acciones', value: 'acciones', sortable: false, align: 'start' },
+      { text: 'Descripción', value: 'descripcion', align: 'start' },
+      { text: 'Sector', value: 'sectorName', align: 'center' },
+      { text: 'Estado', value: 'estadoName', align: 'center'},
+      { text: 'Próxima', value: 'proximaCalib', align: 'center' },
+      { text: 'Encargado', value: 'empresa', align: 'center' },
+      { text: 'Acciones', value: 'acciones', sortable: false, align: 'center' },
     ],
     tableData: [],
   }),
@@ -209,6 +218,18 @@ export default {
     },
   },
   methods: {
+    setColorEstado(item) {
+      switch (item.estadoId) {
+        case 2:
+          return 'green'
+
+        case 3:
+          return 'red'
+
+        default:
+          return 'gray'
+      }
+    },
     deleteOkSector(){
       this.fillItems()
     },

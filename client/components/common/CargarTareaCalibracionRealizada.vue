@@ -121,15 +121,10 @@ import moment from 'moment';
 
 
 export default {
-   props: {
-      calibracion_tarea_id: 1,
-      user_id_for_admin: null
-  }, 
+   props: ['calibracion_tarea_id', 'user_id_for_admin']
+  , 
 
   watch: {
-    calibracion_tarea_id: function () {
-      this.tarea.calibracion_tarea_id = this.calibracion_tarea_id;
-    },
 
     dialog: function () {
       if (this.dialog)
@@ -165,11 +160,10 @@ export default {
       try {
         if (this.$refs.form.validate()) {
           let formData = new FormData()
-
-
+          
           formData.append('certificado', this.certificado);
           formData.append('tareaFecha', this.tarea.fecha);
-          formData.append('tareaId', this.tarea.calibracion_tarea_id);
+          formData.append('tareaId', this.calibracion_tarea_id);
 
           if (!this.textOrList)
           {

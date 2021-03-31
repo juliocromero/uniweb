@@ -83,6 +83,17 @@
                   </v-select>
                 </v-col>
               </v-row>
+              <v-row>
+                 <v-col cols="6">
+                      <v-checkbox
+                        v-model="register.avisos"
+                        color="info"
+                        label="Avisos"
+                        hide-details
+                      ></v-checkbox>
+                </v-col>
+              </v-row>
+
               <!-- Modal status http request -->
               <v-row v-if="alertShow">
                 <v-col cols="12" class="px-0">
@@ -128,7 +139,8 @@ export default {
         empresa: '',
         email: '',
         rol: '',
-        contraseña: ''
+        contraseña: '',
+        avisos: false
       },
       listRol: [
         { text: 'Administrador', value: 0 },

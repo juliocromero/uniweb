@@ -193,7 +193,20 @@ export default {
     intrumento: {
       type : Object,
       required: true
+    },
+    tag: ''
+  },
+  watch: {
+    dialog() {
+      if (this.dialog) {
+        this.getInstrumentoTipo();
+        this.getUnidad();
+        this.getMagnitud();
+        this.getEmpresas();
+        this.instrumento.serie = this.tag;
+      }
     }
+
   },
   data() {
     return {
@@ -220,7 +233,7 @@ export default {
         tipo_id: null,
         unidad_id: null,
         magnitud_id: null,
-        is_patron: true,
+        is_patron: false,
         encargado_calibracion: null
       },
       rules:[ v => !!v || 'Requerido' ],
@@ -341,10 +354,7 @@ export default {
   }
 },
   created(){
-    this.getInstrumentoTipo();
-    this.getUnidad();
-    this.getMagnitud();
-    this.getEmpresas();
+    
   }
 }
 </script>

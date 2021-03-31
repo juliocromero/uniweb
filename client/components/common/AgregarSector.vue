@@ -112,7 +112,8 @@ export default {
   methods:{
     show(){
       this.dialog = true;
-      this.getSectores()
+      this.sectores = ['/'];
+      this.getSectores();
     },
    async agregarSector(){
        try {

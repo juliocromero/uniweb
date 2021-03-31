@@ -60,7 +60,7 @@
                 ></v-autocomplete>
               </v-col>
               <v-col cols="3" class="d-flex justify-center align-center">
-                <agregar-instrumento @click="nuevoInstrumento" @instrumentoCreado="newInstrument"/>
+                <agregar-instrumento @click="nuevoInstrumento" @instrumentoCreado="newInstrument" :tag="item.tag"/>
               </v-col>
               <v-col cols="12">
                 <v-textarea
@@ -68,7 +68,6 @@
                   label="Descripción"
                   rows="1"
                   no-resize
-                  :rules="rules"
                 ></v-textarea>
               </v-col>
             </v-row>
@@ -116,6 +115,7 @@ export default {
     dialog: function () {
       if (this.dialog)
       {
+        this.instrumentos= [];
         this.getInstrumentos();
         this.getSectores();
       }
@@ -188,8 +188,6 @@ export default {
     },
     nuevoInstrumento(){
       this.getInstrumentos();
-     /* this.item.instrumento_id = this.instrumentos[parseInt(this.instrumentos.length-1)].serie */;
-
     },
     getInstrumentos(){
       try {

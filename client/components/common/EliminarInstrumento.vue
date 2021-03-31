@@ -98,7 +98,7 @@ export default {
       } catch (error) {
         this.toggleLoading(false);
         this.dialog = false;
-        this.alertMsg = `No es posible eliminar este Instrumento ya que está asociado a un equipo`;
+        this.alertMsg = `No es posible eliminar este Instrumento.`;
         this.alertType = 'error'
         this.dialogEliminado = true;
         console.log('Error Eliminar instrumento:',error);
