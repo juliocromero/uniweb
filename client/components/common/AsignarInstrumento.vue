@@ -204,7 +204,7 @@ export default {
   props:{
     equipo:{
       type: Object,
-      required: true
+      default: () => {}
     },
     equipoID:{
       type: String,

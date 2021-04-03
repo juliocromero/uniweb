@@ -71,14 +71,27 @@
     </v-app-bar>
     <v-main>
         <nuxt />
-        <v-img
-          style="border-radius: 7px; margin-top: 10px"
-          max-height="100"
-          max-width="200"
+    </v-main>
+    <v-app-bar :bottom="true" :fixed="true">
+      <v-row>
+        <v-col>
+          <v-img
+          max-height="80"
+          max-width="120"
           alt="PX Control"
           src="/logo.png"
         ></v-img>
-    </v-main>
+        </v-col>
+         <v-col class="d-flex justify-end">
+          <v-img
+          max-height="80"
+          max-width="120"
+          alt="PX Control"
+          src="/logo.png"
+        ></v-img>
+        </v-col>
+      </v-row>
+    </v-app-bar>
     <passwordDialog :dialog="dialog" @closeModal="toggleDialogPassword"/>
   </v-app>
 </template>

@@ -53,7 +53,8 @@ import Cookies from 'js-cookie'
 export default {
     props: {
         sector: {
-            type: Object
+            type: Object,
+            default: () => {}
         },
         sectorModal:{
             type: Boolean,

@@ -18,36 +18,49 @@
     </v-tooltip>
     <v-dialog v-model="dialog" width="500">
       <v-card>
-        <v-card-title class="headline white--text blue darken-4">
-          Archivos
-        </v-card-title>
-        <v-card-text>
-          <v-form ref="form" lazy-validation v-model="valid">
-            <v-card class="mx-auto" max-width="300" tile>
-              <v-list shaped>
-                <v-subheader>Archivos</v-subheader>
-                <v-list-item-group v-model="selectedItem" color="primary">
-                  <v-list-item v-for="(item, i) in items" :key="i">
-                    <v-list-item-icon>
-                      <v-icon v-text="item.icon"></v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title v-text="item.text"></v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </v-card>
-            <v-row v-if="alert">
-              <v-col cols="12" class="px-0">
-                <v-alert dense text type="warning"> No hay Archivos! </v-alert>
-              </v-col>
-            </v-row>
-            <v-btn :disabled="rules(ruta_archivo)" @click="archivo"
-              >archivo</v-btn
+        <v-card-title class="headline white--text blue darken-4"
+          >Archivo</v-card-title
+        >
+        <v-form ref="form" lazy-validation v-model="valid">
+          <v-list shaped>
+            <v-list-item-group color="primary" v-if="items.length > 0" >
+              <v-list-item v-for="(item, i) in items" :key="i">
+                <v-list-item-icon>
+                  <v-icon>article</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item"></v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-icon @click="archivo(item)">
+                  <v-icon class="file-download">file_download</v-icon>
+                </v-list-item-icon>
+              </v-list-item>
+            </v-list-item-group>
+            <v-list-item-group v-else>
+              <v-row >
+                <v-col cols="12" class="px-0">
+                  <v-alert dense text type="warning"> No hay Archivos! </v-alert>
+                </v-col>
+              </v-row>
+            </v-list-item-group>
+          </v-list>
+          <v-divider></v-divider>
+          <div width="100%" class="d-flex justify-center m2">
+            <v-file-input
+              class="input-file"
+              max-width="100"
+              v-model="files"
+              placeholder="Cargar Archivo"
+              outlined
+              :show-size="1000"
+              @change="SubirArchivos"
             >
-          </v-form>
-        </v-card-text>
+            </v-file-input>
+            <v-btn color="error" text @click="hide">
+                Cancelar
+              </v-btn>
+          </div>
+        </v-form>
       </v-card>
     </v-dialog>
   </div>
@@ -74,39 +87,69 @@ export default {
       alertMsg: '',
       alerType: '',
       alert: false,
-      ruta_archivo: '',
-      rules: (v) => v == '',
       nombre: '',
       sectores: [],
       electedItem: 1,
-      items: [
-        { text: 'Real-Time', icon: 'mdi-clock' },
-        { text: 'Audience', icon: 'mdi-account' },
-        { text: 'Conversions', icon: 'mdi-flag' },
-      ],
+      items: [],
+      files: null,
     }
   },
   methods: {
+    hide() {
+      this.dialog = false
+    },
     show() {
       this.dialog = !this.dialog
-      this.addDefault()
+      this.archivosFile()
     },
-    async addDefault() {
-      if (
-        (this.sectores[0] = `storage/archivos/instrumentos/${this.equipo.instrumento_marca}/${this.equipo.instrumento_modelo}/`)
-      ) {
-        return
-      } else {
-        this.sectores.push(
-          `storage/archivos/instrumentos/${this.equipo.instrumento_marca}/${this.equipo.instrumento_modelo}/`
-        )
-      }
-    },
-    async archivo() {
+    async archivosFile() {
       let items = {
         instrumento_marca: this.equipo.instrumento_marca,
         instrumento_modelo: this.equipo.instrumento_modelo,
-        id: this.equipo.instrumento_id,
+      }
+      try {
+        await axios
+          .get(
+            'archivosList',
+            { params: items },
+            {
+              headers: {
+                Authorization: `Bearer ${this.token}`,
+              },
+            }
+          )
+          .then((res) => {
+            this.items = res.data
+          })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async SubirArchivos(event) {
+      console.log(event)
+      let items = new FormData()
+      items.append('instrumento_marca', this.equipo.instrumento_marca)
+      items.append('instrumento_modelo', this.equipo.instrumento_modelo)
+      items.append('pdfIns', event)
+      
+      try {
+        await axios
+          .post(`archivos`, items, {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+            responseType: 'blob',
+          })
+          .then((response) => {})
+      } catch (error) {
+        this.alert = true
+      }
+    },
+    async archivo(nameFile) {
+      let items = {
+        instrumento_marca: this.equipo.instrumento_marca,
+        instrumento_modelo: this.equipo.instrumento_modelo,
+        nameArchivos: nameFile,
       }
       try {
         await axios
@@ -119,7 +162,7 @@ export default {
           })
           .then((response) => {
             const content = response.headers['content-type']
-            download(response.data, 'Instrumentos.pdf', content)
+            download(response.data, `${nameFile}`, content)
           })
       } catch (error) {
         this.alert = true
@@ -140,4 +183,28 @@ export default {
 </script>
 
 <style>
+.input-file > .v-input__control {
+}
+.input-file {
+  background-color:white !important;
+  text-align: center;
+  transition: none;
+}
+.input-file > .v-input__control > .v-input__slot {
+  margin:0px;
+  padding: 0px;
+  border: none;
+  background:rgb(135, 165, 204);
+  width: 200px;
+  height: 40px;
+  min-height: 0px;
+  font-size: 1rem;
+}
+.input-file > .v-input__control > .v-input__slot:hover{
+  cursor: pointer;
+  border: 2px solid rgb(111, 111, 165) !important;
+}
+.file-download:hover{
+  color: rgb(94, 192, 94);
+}
 </style> 
