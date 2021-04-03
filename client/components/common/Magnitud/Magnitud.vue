@@ -1,6 +1,6 @@
 <template>
 <v-container>
-          <v-card>
+          <v-card max-width="600px">
               <v-container> 
             <v-data-table
               :headers="headers"

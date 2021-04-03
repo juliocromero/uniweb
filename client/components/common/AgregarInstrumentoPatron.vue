@@ -28,7 +28,6 @@
                       <v-text-field 
                       v-model="instrumento.marca"
                       label="Marca"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -36,7 +35,6 @@
                       <v-text-field 
                       v-model="instrumento.modelo"
                       label="Modelo"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -67,7 +65,6 @@
                       <v-text-field 
                       v-model="instrumento.resolucion"
                       label="Resolución"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -75,7 +72,6 @@
                       <v-text-field
                       v-model="instrumento.tolerancia" 
                       label="Tolerancia"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -108,7 +104,6 @@
                       <v-text-field
                       v-model="instrumento.rango_de" 
                       label="Rango de"
-                      :rules="rulesNum"
                       type="number"
                       >
                       </v-text-field>
@@ -117,7 +112,6 @@
                       <v-text-field 
                       v-model="instrumento.rango_a"
                       label="Rango a"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -128,7 +122,6 @@
                       <v-text-field 
                       v-model="instrumento.rango_normal_de"
                       label="Rango normal de"
-                      :rules="rulesNum"
                       type="number"
                       >
                       </v-text-field>
@@ -137,7 +130,6 @@
                       <v-text-field 
                       v-model="instrumento.rango_normal_a"
                       label="Rango normal a"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -261,8 +253,8 @@ export default {
               this.alertMsg = "Instrumento agregado correctamente"
               this.alerType = "success"
               this.alertShow = true;
-              this.$refs.form.reset();
               this.$emit('click');
+              this.hide();
             })
       }
       } catch (error) {
@@ -276,6 +268,7 @@ export default {
       this.$refs.form.reset();
       this.RefreshInstrumento();
       this.dialog = false;
+      this.alertShow = false;
     },
     getInstrumentoTipo(){
         try {

@@ -26,7 +26,6 @@
                       <v-text-field 
                       v-model="instrumento.marca"
                       label="Marca"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -34,7 +33,6 @@
                       <v-text-field 
                       v-model="instrumento.modelo"
                       label="Modelo"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -65,7 +63,6 @@
                       <v-text-field 
                       v-model="instrumento.resolucion"
                       label="Resolución"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -73,7 +70,6 @@
                       <v-text-field
                       v-model="instrumento.tolerancia" 
                       label="Tolerancia"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -106,7 +102,6 @@
                       <v-text-field
                       v-model="instrumento.rango_de" 
                       label="Rango de"
-                      
                       >
                       </v-text-field>
                     </v-col>
@@ -114,7 +109,6 @@
                       <v-text-field 
                       v-model="instrumento.rango_a"
                       label="Rango a"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -125,7 +119,6 @@
                       <v-text-field 
                       v-model="instrumento.rango_normal_de"
                       label="Rango normal de"
-                      :rules="rules"
                       >
                       </v-text-field>
                     </v-col>
@@ -241,8 +234,8 @@ export default {
               this.alertMsg = "Instrumento actualizado correctamente"
               this.alertType = "success"
               this.alertShow = true;
-              this.$refs.form.reset();
               this.$emit('click');
+              this.hide();
             })
       }
       } catch (error) {
@@ -331,6 +324,7 @@ export default {
       hide(){
         this.dialog = false;
         this.$refs.form.reset();
+        this.alertShow = false;
       },
   }
 }

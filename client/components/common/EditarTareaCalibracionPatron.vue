@@ -1,26 +1,23 @@
 <template>
-  <div class="d-flex justify-end">
+  <div class="d-flex justify-end"
+  >
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              depressed
-              x-small
-              height="30"
-              color="info"
+            <v-icon
               v-bind="attrs"
               v-on="on"
-              @click="dialog = true"
+              @click="openModal"
             >
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
+              mdi-pencil
+            </v-icon>
           </template>
-          <span>Agregar Tarea</span>
+          <span>Editar Tarea</span>
         </v-tooltip>
 
         <v-dialog v-model="dialog" width="500">
           <v-card>
             <v-card-title class="headline white--text blue darken-4">
-              Agregar Nueva Tarea
+              Agregar Nueva Tarea 
             </v-card-title>
 
             <v-card-text>
@@ -38,39 +35,17 @@
                       </v-autocomplete>
                     </v-col>
                   </v-row>
-
                   <v-row>
                     <v-col cols="12">
-                      <v-text-field
-                        v-model="tarea.frecuencia"
-                        type="number"
-                        label="Frecuencia"
-                        :rules="rules"
-                      ></v-text-field>
+                      <v-autocomplete
+                      v-model="tarea.habilitada"
+                      label="Habilitación"
+                      :items="[{value: false, text: 'Deshabilitada'}, {value: true, text: 'Habilitada'}]"
+                      >
+                      </v-autocomplete>
                     </v-col>  
                   </v-row>
-                  
-
-                  <v-row>
-                    <v-col cols="12">
-
-                      <v-card class="pa-5">
-                        <v-text-field
-                          v-model="tarea.proxima"
-                          label="Próxima Calibración"
-                          readonly
-                        ></v-text-field>
-
-                        <v-date-picker
-                          v-model="tarea.proxima"
-                          :first-day-of-week="1"
-                          locale="es-ar"
-                          width="auto"
-                        ></v-date-picker>
-                      </v-card>
-
-                    </v-col>
-                  </v-row>
+                
                   <!-- Modal status http request -->
                   <v-row v-if="alertShow">
                     <v-col cols="12" class="px-0">
@@ -93,7 +68,7 @@
               <v-btn color="error" text @click="hide">
                 Cancelar
               </v-btn>
-              <v-btn color="primary" text @click="agregarTareaCalibracion">
+              <v-btn color="primary" text @click="EditCalibrations">
                 Ok
               </v-btn>
             </v-card-actions>
@@ -106,7 +81,12 @@
 import axios from '~/plugins/axios';
 import Cookies from 'js-cookie';
 export default {
-  props:['instrumento_id'],
+  props:{
+    calibracionItem:{
+      type: Object,
+      default: () => {}
+    }
+  },
   data() {
     return {
       picker: new Date().toISOString().substr(0, 10),
@@ -118,38 +98,47 @@ export default {
       alertType:'success',
       calibracionTipo:[],
       tarea:{
-          instrumento_id:"",
+          instrumento_id: "",
           calibracion_tipo_id: "",
-          frecuencia: "",
-          habilitada: 1,
+          frecuencia: 0,
           proxima: new Date().toISOString().substr(0, 10),
+          habilitada: 1
       },
       rules:[ v => !!v || 'Requerido' ],
     }
   },
+  computed:{/* 
+    calibrationsValue(){      
+      let value = this.calibracionItem.num_tarea
+      return value
+    } */
+  },
   methods:{
-   async agregarTareaCalibracion(){
+    openModal(){
+      this.dialog = true
+      this.alertShow = false
+      this.getCalibracionTipo();
+      this.tarea.calibracion_tipo_id = this.calibracionItem.calibracion_tipo_id
+      this.tarea.habilitada = this.calibracionItem.habilitada
+    },
+   async EditCalibrations(){
       const obj = this.tarea;
-      try {
-        if(this.$refs.form.validate()){
-          
-          this.tarea.instrumento_id = this.instrumento_id;
-
-         await axios.post('calibracion', this.tarea ,{
-              headers: { Authorization: `Bearer ${this.token}` },
-            })
-            .then(()=>{
-              this.alertMsg = "Se agregó una nueva tarea de calibración"
-              this.alerType = "success"
-              this.alertShow = true;
-              this.$emit('click');
-              this.hide();
-            }) 
-      }
+      try {          
+        await axios.put(`calibracionEdit/${this.calibracionItem.id}`, this.tarea ,{
+            headers: { Authorization: `Bearer ${this.token}` },
+          })
+          .then(()=>{
+            this.alertMsg = "Se agregó una nueva tarea de calibración"
+            this.alertType = "success"
+            this.alertShow = true;
+            this.dialog = false
+            this.$emit('reload');
+            this.hide();
+          }) 
       } catch (error) {
         console.log(error)
         this.alertMsg = "Hubo un error al processar tu solicitud"
-        this.alerType = "error"
+        this.alertType = "error"
         this.alertShow = true;
       }
     },
@@ -157,13 +146,15 @@ export default {
       this.$refs.form.reset();
       this.dialog = false;
     },
-    getCalibracionTipo(){
+    async getCalibracionTipo(){
         try {
-          axios.get('calibracionTipo', {
+          await axios.get('calibracionTipo', {
             headers: { Authorization: `Bearer ${this.token}` },
           })
           .then((res)=>{
+            this.calibracionTipo = [];
             for (const item of res.data.data) {
+              
              this.calibracionTipo.push({ text: item.nombre , value: item.id}); ;
             }
             console.log('Calibracion Tipo:', this.calibracionTipo);
@@ -174,7 +165,6 @@ export default {
         }
 },
   created(){
-    this.getCalibracionTipo();
   }
 }
 </script>

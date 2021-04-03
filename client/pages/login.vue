@@ -46,6 +46,13 @@
           </v-row>
           <div class="mb-5 mt-0 ingresar">
             <v-btn width="100%" small color="#3ba1da" dark @click="ingresar()">Ingresar</v-btn>
+            <v-img
+            style="border-radius: 7px; margin-top: 20px; background-color: white;"
+            max-height="100"
+            max-width="200"
+            alt="PX Control"
+            src="/logo.png"
+          ></v-img>
           </div>
         </v-container>
       </v-form>

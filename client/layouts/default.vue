@@ -31,6 +31,7 @@
         </v-list-item>         
       </v-list>
 
+    
       <password/>
     </v-navigation-drawer>
 
@@ -47,20 +48,20 @@
           </v-btn>
         </template>
        <v-list >
-          <v-list-item class="menuUser pointer"  >
-            <v-list-item-title  @click="toggleDialogPassword(true)">
+          <v-list-item class="menuUser pointer" @click="toggleDialogPassword(true)" >
+            <v-list-item-title  >
               <v-icon left color="#295382" align="center" >lock</v-icon>
-              Cambiar Contraseña
+              Cambiar contraseña
             </v-list-item-title>
           </v-list-item>
            <v-list-item  v-if="isRolUser" class="menuUser poiter" to="/Panel" >
             <v-list-item-title>
               <v-icon left color="#295382" >settings</v-icon>
-              Panel De Control
+              Panel de control
             </v-list-item-title>
           </v-list-item>
-          <v-list-item class="menuUser poiter">
-            <v-list-item-title @click="SET_DESLOGIN()">
+          <v-list-item class="menuUser poiter" @click="SET_DESLOGIN()">
+            <v-list-item-title>
               <v-icon left color="#295382" >west</v-icon>
               Salir
             </v-list-item-title>
@@ -70,6 +71,13 @@
     </v-app-bar>
     <v-main>
         <nuxt />
+        <v-img
+          style="border-radius: 7px; margin-top: 10px"
+          max-height="100"
+          max-width="200"
+          alt="PX Control"
+          src="/logo.png"
+        ></v-img>
     </v-main>
     <passwordDialog :dialog="dialog" @closeModal="toggleDialogPassword"/>
   </v-app>

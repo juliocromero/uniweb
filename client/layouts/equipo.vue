@@ -73,6 +73,13 @@
     </v-app-bar>
     <v-main>
         <nuxt />
+        <v-img
+          style="border-radius: 7px; margin-top: 10px"
+          max-height="100"
+          max-width="200"
+          alt="PX Control"
+          src="/logo.png"
+        ></v-img>
     </v-main>
     <password-dialog :dialog="password" @closeModal="toggleDialogPassword"/>
   </v-app>

@@ -1,14 +1,27 @@
 <template>
   <div>
-    <v-icon small @click="dialog=true"> mdi-delete </v-icon>
+     <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon 
+            small 
+            @click="dialog=true"
+            v-bind="attrs"
+            v-on="on"
+            > 
+              mdi-delete 
+              </v-icon>
+          </template>
+          <span>Eliminar Tarea</span>
+        </v-tooltip>
+    
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title class="headline blue darken-4 white--text">
-          Eliminar Equipo
+          Eliminar Tarea
         </v-card-title>
 
         <v-card-subtitle class="mt-5 Subtitle 1">
-            <strong><h3>¿Está seguro de que desea eliminar el equipo {{tag}}?</h3></strong>
+            <strong><h3>¿Está seguro de que desea eliminar la tarea de calibración N° {{id}}?</h3></strong>
         </v-card-subtitle>
 
         <v-card-actions>
@@ -30,7 +43,7 @@
       <v-card>
         <v-card-title class="headline">
           <v-alert width="380" outlined type="success"> 
-            Se ha eliminado el equipo <strong>{{tag}}</strong>
+            Se ha eliminado la tarea
           </v-alert>
         </v-card-title>
         <v-card-actions>
@@ -46,7 +59,7 @@
       </v-card>
     </v-dialog>
 
-    <loading :tag="`Eliminando equipo ${tag}`"/>
+    <loading :tag="`Eliminando...`"/>
 
   </div>
 </template>
@@ -64,9 +77,6 @@ export default {
     id:{
     type: Number,
     required:true
-    },
-    tag:{
-      type: String
     }
   },
   data(){
@@ -82,7 +92,7 @@ export default {
       this.toggleLoading(true);
 
       try {
-        await axios.delete(`equipo/${this.id}`, {
+        await axios.delete(`tarea-calibracion/${this.id}`, {
           headers: { Authorization: `Bearer ${token}`
           },
         })

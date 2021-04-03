@@ -23,55 +23,29 @@
         </v-card-title>
         <v-card-text>
           <v-form ref="form" lazy-validation v-model="valid">
-            <v-container>
-              <v-row class="mt-3" v-if="equipo">
-                <v-col cols="6">
-                  <v-text-field
-                    :value="equipo.instrumento_marca"
-                    outlined
-                    dense
-                    disabled
-                    hide-details
-                    label="Marca"
-                    background-color="white"
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="6">
-                  <v-text-field
-                    :value="equipo.instrumento_modelo"
-                    outlined
-                    dense
-                    disabled
-                    hide-details
-                    label="Modelo"
-                    background-color="white"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="12">
-                  <v-autocomplete
-                    v-model="ruta_archivo"
-                    :items="sectores"
-                    label="Explorador Archivos"
-                    auto-select-first
-                  />
-                </v-col>
-              </v-row>
-            </v-container>
-             <v-row v-if="alert">
-                    <v-col cols="12" class="px-0">
-                      <v-alert
-                        dense
-                        text
-                        type="warning"
-                      >
-                        No hay Archivos!
-                      </v-alert>
-                    </v-col>
-                  </v-row>
-            <v-btn :disabled="rules(ruta_archivo)" @click="archivo">archivo</v-btn>
+            <v-card class="mx-auto" max-width="300" tile>
+              <v-list shaped>
+                <v-subheader>Archivos</v-subheader>
+                <v-list-item-group v-model="selectedItem" color="primary">
+                  <v-list-item v-for="(item, i) in items" :key="i">
+                    <v-list-item-icon>
+                      <v-icon v-text="item.icon"></v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title v-text="item.text"></v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-card>
+            <v-row v-if="alert">
+              <v-col cols="12" class="px-0">
+                <v-alert dense text type="warning"> No hay Archivos! </v-alert>
+              </v-col>
+            </v-row>
+            <v-btn :disabled="rules(ruta_archivo)" @click="archivo"
+              >archivo</v-btn
+            >
           </v-form>
         </v-card-text>
       </v-card>
@@ -99,11 +73,17 @@ export default {
       dialog: false,
       alertMsg: '',
       alerType: '',
-      alert: false ,
+      alert: false,
       ruta_archivo: '',
       rules: (v) => v == '',
       nombre: '',
       sectores: [],
+      electedItem: 1,
+      items: [
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+      ],
     }
   },
   methods: {
@@ -133,7 +113,7 @@ export default {
           .get(`archivos`, {
             params: items,
             headers: {
-              Authorization: `Bearer ${this.token}`
+              Authorization: `Bearer ${this.token}`,
             },
             responseType: 'blob',
           })

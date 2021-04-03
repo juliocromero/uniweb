@@ -78,7 +78,6 @@
                     v-model="register.rol"
                     label="Rol"
                     :items="listRol"
-                    :rules="rules"
                   >
                   </v-select>
                 </v-col>
@@ -162,8 +161,8 @@ export default {
               this.alertMsg = 'Usuario agregado correctamente'
               this.alerType = 'success'
               this.alertShow = true
-              this.$refs.form.reset()
               this.$emit('click')
+              this.hide()
             })
         }
       } catch (error) {
@@ -175,6 +174,7 @@ export default {
     },
     hide() {
       this.$refs.form.reset()
+      this.alertShow = false
       this.dialog = false
     },
   },

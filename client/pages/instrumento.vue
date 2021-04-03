@@ -32,12 +32,21 @@
 
                   <v-spacer></v-spacer>
 
-                  <agregar-instrumento @click="getInstrumentos" :intrumento='intrumentoRefresh'/>
+                  <agregar-instrumento @click="getInstrumentos" :intrumento='intrumentoRefresh' @instrumentoCreado="getInstrumentos" v-if="isRolUser"/>
                 </v-toolbar>
               </template>
 
+              <template v-slot:[`item.estado_name`]="{ item }">
+                <v-chip
+                :color="setColorEstado(item)"
+                text-color="white"
+                >
+                  {{item.estado_name}}
+                </v-chip>
+              </template>
+
               <template v-slot:[`item.acciones`]="{ item }">
-                <v-row class="d-flex justify-center">
+                <v-row class="d-flex justify-center" v-if="isRolUser">
                   <editar-instrumento
                     :id="item.id"
                     class="mr-2"
@@ -65,6 +74,8 @@ import axios from '~/plugins/axios'
 import Cookies from 'js-cookie'
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import AgregarInstrumento from "~/components/common/AgregarInstrumento.vue";
+import { mapState } from 'vuex';
+
 export default {
   middleware: 'NOAUTH',
   components: {
@@ -112,23 +123,33 @@ export default {
       { text: 'Serie', value: 'serie', align: 'center' },
       { text: 'Marca', value: 'marca', align: 'center' },
       { text: 'Modelo', value: 'modelo', align: 'center' },
-      { text: 'Estado', align: 'start', value: 'estado_name' },
-      { text: 'Rango de', value: 'rango_de' },
-      { text: 'Rango a', value: 'rango_a' },
-      { text: 'Rango norm. de', value: 'rango_normal_de' },
-      { text: 'Rango norm. a', value: 'rango_normal_a' },
-      { text: 'Resolución', value: 'resolucion' },
-      { text: 'Tolerancia', value: 'tolerancia' },
-      { text: 'Tipo', value: 'tipo_name' },
-      { text: 'Unidad', value: 'unidad' },
-      { text: 'Magnitud', value: 'magnitud' },
-      { text: 'Encargado', value: 'empresa' },
-      { text: 'Creado', value: 'created_at' },
-      { text: 'Actualizado', value: 'updated_at' },
+      { text: 'Estado', align: 'center', value: 'estado_name' },
+      { text: 'Rango de', align: 'center', value: 'rango_de' },
+      { text: 'Rango a', align: 'center', value: 'rango_a' },
+      { text: 'Rango norm. de', align: 'center', value: 'rango_normal_de' },
+      { text: 'Rango norm. a', align: 'center', value: 'rango_normal_a' },
+      { text: 'Resolución', align: 'center', value: 'resolucion' },
+      { text: 'Tolerancia', align: 'center', value: 'tolerancia' },
+      { text: 'Tipo', align: 'center', value: 'tipo_name' },
+      { text: 'Unidad', align: 'center', value: 'unidad' },
+      { text: 'Magnitud', align: 'center', value: 'magnitud' },
+      { text: 'Encargado', align: 'center', value: 'empresa' },
+      { text: 'Creado', align: 'center', value: 'created_at' },
+      { text: 'Actualizado', align: 'center', value: 'updated_at' },
       { text: 'Acciones', value: 'acciones', sortable: false, align: 'start' }
     ],
     tableData: [],
   }),
+  computed: {
+    ...mapState(['rolUser']),
+
+    isRolUser(){    
+      if(this.rolUser == 0){
+        return true
+      }
+      return false
+    }
+  },
   methods: {
     async getInstrumentos() {
       try {
@@ -144,6 +165,19 @@ export default {
           })
       } catch (error) {
         console.log(error)
+      }
+    },
+
+    setColorEstado(item) {
+      switch (item.estadoId) {
+        case 2:
+          return 'green'
+
+        case 3:
+          return 'red'
+
+        default:
+          return 'gray'
       }
     },
 

@@ -14,6 +14,13 @@
                     >
                       Detalle
                     </div>
+                    <v-chip
+                      style="margin-left: 10px"
+                      :color="estadoColor"
+                      text-color="white"
+                      >
+                        {{estadoText}}
+                    </v-chip>
                   </v-col>
                 </v-row>
                 <v-divider></v-divider>
@@ -237,11 +244,41 @@
                     hide-default-footer
                     height="515"
                   >
+                    <template v-slot:[`item.proxima`]="{ item }">
+                      <v-chip
+                      :color="setColorEstado(item)"
+                      text-color="white"
+                      >
+                        {{item.proxima}}
+                      </v-chip>
+                    </template>
+
+                    <template v-slot:[`item.habilitada`]="{ item }">
+                      <v-checkbox
+                        v-model="item.habilitada"
+                        color="info"
+                        hide-details
+                        disabled
+                      ></v-checkbox>
+                    </template>
+
                     <template v-slot:[`item.acciones`]="{ item }">
-                      <cargar-tarea-calibracion-realizada-patron
-                        :calibracion_tarea_id="item.id"
-                        @click="getTareasRealizadas"
-                      />
+                      <div class="d-flex">
+                        <cargar-tarea-calibracion-realizada-patron
+                          :calibracion_tarea_id="item.id"
+                          class="mr-2"
+                          @click="getTareasRealizadas"
+                        />
+
+                        <editar-tarea-calibracion-patron
+                          v-if="rolUser == 0"
+                          class="mr-2"
+                          :calibracionItem="item"
+                          @reload="getInstrumento"
+                        />
+                        
+                        <eliminar-tarea-calibracion :id="item.id" @click="getInstrumento" v-if="rolUser == 0"/>
+                      </div>
                     </template>
                   </v-data-table>
                 </v-card>
@@ -319,6 +356,7 @@
 <script>
 import BtnPDF from '~/components/common/btnPDF.vue'
 import axios from '~/plugins/axios'
+import moment from 'moment'
 import Cookies from 'js-cookie'
 import Filtro from '@/components/public/Filtro'
 import AgregarCertificado from '~/components/common/AgregarCertificado.vue'
@@ -327,6 +365,7 @@ import AgregarCalibracion from '~/components/common/AgregarCalibracion.vue'
 import CargarTareaCalibracionRealizadaPatron from '~/components/common/CargarTareaCalibracionRealizadaPatron.vue'
 import download from 'downloadjs'
 import {mapState, mapMutations} from 'vuex'
+import EditarTareaCalibracionPatron from '../../components/common/EditarTareaCalibracionPatron.vue'
 
 export default {
   middleware: 'NOAUTH',
@@ -336,7 +375,8 @@ export default {
     AgregarCertificado,
     AgregarCalibracion,
     CargarTareaCalibracionRealizadaPatron,
-    AsignarInstrumento
+    AsignarInstrumento,
+    EditarTareaCalibracionPatron
   },
   layout: 'equipo',
   data() {
@@ -346,6 +386,8 @@ export default {
       desde: null,
       hasta: null,
       equipoAsignado: [],
+      estadoText: 'Sin estado',
+      estadoColor: 'gray',
       listRutas: [],
      token: Cookies.get('token'),
       item: {},
@@ -369,6 +411,9 @@ export default {
           text: 'Proxima Calibracion',
           align: 'center',
           value: 'proxima',
+        },
+        {
+          text: 'Habilitada', value: 'habilitada', align: 'center'
         },
         { text: 'Acciones', align: 'center', value: 'acciones' },
       ],
@@ -397,6 +442,22 @@ export default {
             this.item = res.data.data;
             console.log(this.item)
             this.tareasCalibracion = this.item.tareaCalibracion;
+
+            this.estadoText = this.item.estado;
+
+            switch (this.item.estado_id) {
+              case 2:
+                this.estadoColor = 'green'
+                break;
+
+              case 3:
+                this.estadoColor = 'red'
+                break;
+            
+              default:
+                this.estadoColor = 'gray'
+                break;
+            }
           })
       } catch (error) {
         console.log(error)
@@ -424,6 +485,7 @@ export default {
       }
       finally {
         this.loadingCertificados = false;
+        this.getInstrumento();
       }
     },
     async getCertificado(id, nombreArchivo) {
@@ -453,7 +515,23 @@ export default {
       this.hasta = null
       this.$refs.Filtro.click()
       this.filterByDate(null, null)
-    }
+    },
+    setColorEstado(item) {
+      if (item.habilitada) {
+        if (moment().isAfter(item.proxima)) {
+          return 'red'
+        }
+        else
+        {
+          return 'green'
+        }
+      }
+      else
+      {
+        return 'gray'
+      }
+      
+    },
   },
   watch: {
     optionsCertificados: {

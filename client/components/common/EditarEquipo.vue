@@ -57,7 +57,6 @@
                     label="Descripción"
                     rows="1"
                     no-resize
-                    :rules="rules"
                   ></v-textarea>
                 </v-col>
               </v-row>

@@ -370,6 +370,8 @@
                     :items="equipoAsignado"
                     hide-default-footer
                     disable-pagination
+                    sortBy="[desde]"
+                    sortDesc="[DESC]"
                     height="420"
                   >
                   <template v-slot="">
@@ -413,6 +415,7 @@
                     :headers="headersTareasCalibracion"
                     :items="tareasCalibracion"
                     hide-default-footer
+                    disable-pagination
                     height="515"
                   >
 
@@ -425,8 +428,23 @@
                       </v-chip>
                     </template>
 
+                    <template v-slot:[`item.calibracion_tarea_habilitada`]="{ item }">
+                      <v-checkbox
+                        v-model="item.calibracion_tarea_habilitada"
+                        color="info"
+                        hide-details
+                        disabled
+                      ></v-checkbox>
+                    </template>
+
                     <template v-slot:[`item.acciones`]="item">
                       <div class="d-flex">
+                        <cargar-tarea-calibracion-realizada
+                        :calibracion_tarea_id="item.item.num_tarea"
+                        :user_id_for_admin="encargadoID"
+                        @click="getTareasRealizadas"
+                        class="mr-2"
+                      />
                          <editar-tarea-calibracion
                          v-if="rolUser == 0"
                         class="mr-2"
@@ -436,13 +454,8 @@
                         :user_id_for_admin="encargadoID"
                         @reload="GetRealoadItems"
                       />
-                      <cargar-tarea-calibracion-realizada
-                        :calibracion_tarea_id="item.item.num_tarea"
-                        :user_id_for_admin="encargadoID"
-                        @click="getTareasRealizadas"
-                        class="mr-2"
-                      />
-                      
+
+                      <eliminar-tarea-calibracion :id="item.item.num_tarea" @click="getEquipo" v-if="rolUser == 0"/>
                       </div>
                     </template>
                   </v-data-table>
@@ -484,23 +497,24 @@
                  
                     <template v-slot:[`item.patron`]="{ item }">
                       <template  v-if="!item.patron_isString">
-                        <v-tooltip bottom v-for="it in item.patron" :key="it.idCert">
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                              v-on="on"
-                              v-bind="attrs"
-                              text
-                              small
-                              color="info"
-                              @click="getCertificado(it.idCert, it.certName)"
-                              target="_blank"
-                              download
-                            >
-                              {{ it.certName }}</v-btn
-                            >
-                          </template>
-                          <span>Descargar Certificado</span>
-                        </v-tooltip>
+                        <nuxt-link :to="`../detalle_patron/${it.id}?desde=${item.fecha}`" :exact="true" v-for="it in item.patron" :key="it.id">
+                          <v-tooltip bottom >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-on="on"
+                                v-bind="attrs"
+                                text
+                                small
+                                color="info"
+                                target="_blank"
+                                download
+                              >
+                                {{ it.serie }}</v-btn
+                              >
+                            </template>
+                            <span>Ir a patrón</span>
+                          </v-tooltip>
+                        </nuxt-link>
                       </template>
                       <template  v-if="item.patron_isString">
                         {{item.patron}}
@@ -557,6 +571,7 @@ import CargarTareaCalibracionRealizada from '~/components/common/CargarTareaCali
 import download from 'downloadjs'
 import moment from 'moment'
 import {mapState , mapMutations} from 'vuex'
+import EliminarTareaCalibracion from '../../components/common/EliminarTareaCalibracion.vue'
 
 export default {
   middleware: 'NOAUTH',
@@ -568,6 +583,7 @@ export default {
     CargarTareaCalibracionRealizada,
     AsignarInstrumento,
     EditarTareaCalibracion,
+    EliminarTareaCalibracion,
     Archivos
   },
   layout: 'equipo',
@@ -619,7 +635,7 @@ export default {
       },
       headersEquiposAsignados: [
         { text: 'Equipo', align: 'start', value: 'equipo' },
-        { text: 'Instrumento', value: 'instrumento' },
+        { text: 'Serie', value: 'instrumento' },
         { text: 'Desde', value: 'desde' },
         { text: 'Hasta', value: 'hasta' },
       ],
@@ -645,6 +661,9 @@ export default {
           align: 'center',
           value: 'calibracion_tarea_proxima',
         },
+        {
+          text: 'Habilitada', value: 'calibracion_tarea_habilitada', align: 'center'
+        },
         { text: 'Acciones', value: 'acciones', sortable: false, align: 'center'},
       ],
       tareasCalibracion: [],
@@ -663,12 +682,18 @@ export default {
       this.getEquipo()
     },
     setColorEstado(item) {
-      if (moment().isAfter(item.calibracion_tarea_proxima)) {
-        return 'red'
+      if (item.calibracion_tarea_habilitada) {
+        if (moment().isAfter(item.calibracion_tarea_proxima)) {
+          return 'red'
+        }
+        else
+        {
+          return 'green'
+        }
       }
       else
       {
-        return 'green'
+        return 'gray'
       }
     },
     getRutas() {

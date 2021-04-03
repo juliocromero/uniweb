@@ -37,36 +37,15 @@
                   </v-row>
                   <v-row>
                     <v-col cols="12">
-                      <v-text-field
-                        v-model="tarea.frecuencia"
-                        type="number"
-                        label="Frecuencia"
-                        :rules="rules"
-                      ></v-text-field>
+                      <v-autocomplete
+                      v-model="tarea.habilitada"
+                      label="Habilitación"
+                      :items="[{value: false, text: 'Deshabilitada'}, {value: true, text: 'Habilitada'}]"
+                      >
+                      </v-autocomplete>
                     </v-col>  
                   </v-row>
                   
-
-                 <!-- <v-row>
-                    <v-col cols="12">
-
-                      <v-card class="pa-5">
-                        <v-text-field
-                          v-model="tarea.proxima"
-                          label="Próxima Calibración"
-                          readonly
-                        ></v-text-field>
-
-                        <v-date-picker
-                          v-model="tarea.proxima"
-                          :first-day-of-week="1"
-                          locale="es-ar"
-                          width="auto"
-                        ></v-date-picker>
-                      </v-card>
-
-                    </v-col>
-                  </v-row>-->
                   <!-- Modal status http request -->
                   <v-row v-if="alertShow">
                     <v-col cols="12" class="px-0">
@@ -122,32 +101,19 @@ export default {
           instrumento_id: "",
           calibracion_tipo_id: "",
           frecuencia: 0,
+          habilitada: 1,
           proxima: new Date().toISOString().substr(0, 10),
       },
       rules:[ v => !!v || 'Requerido' ],
     }
   },
-  computed:{/* 
-    calibrationsValue(){      
-      let value = this.calibracionItem.num_tarea
-      return value
-    } */
-  },
   methods:{
     openModal(){
       this.dialog = true
       this.alertShow = false
-      let value = this.calibracionItem.calibracion_tarea_tipo
-      this.tarea.frecuencia = this.calibracionItem.calibracion_tarea_frecuencia
-      this.filtrarCalibration(value)
-
-    },
-    filtrarCalibration(val){
-      this.calibracionTipo.map(e => {
-        if(e.text == val){
-          this.tarea.calibracion_tipo_id = e.value
-        }
-      })
+      this.getCalibracionTipo();
+      this.tarea.calibracion_tipo_id = this.calibracionItem.calibracion_tarea_tipo_id
+      this.tarea.habilitada = this.calibracionItem.calibracion_tarea_habilitada
     },
    async EditCalibrations(){
       const obj = this.tarea;
@@ -180,10 +146,10 @@ export default {
             headers: { Authorization: `Bearer ${this.token}` },
           })
           .then((res)=>{
+            this.calibracionTipo = [];
             for (const item of res.data.data) {
              this.calibracionTipo.push({ text: item.nombre , value: item.id}); ;
             }
-            console.log('Calibracion Tipo:', this.calibracionTipo);
           })
           } catch (error) {
             console.log(error)
@@ -191,7 +157,7 @@ export default {
         }
 },
   created(){
- this.getCalibracionTipo();
+ 
   }
 }
 </script>

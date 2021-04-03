@@ -72,13 +72,23 @@
                     </v-col>
                     <v-col cols="6">
                          <v-text-field 
-                      v-model="usuario.empresa"
-                      label="Empresa"
-                      :rules="rules"
-                      >
+                          v-model="usuario.empresa"
+                          label="Empresa"
+                          :rules="rules"
+                          >
                          </v-text-field>
                     </v-col>
                    </v-row>
+                   <v-row>
+                      <v-col cols="6">
+                            <v-checkbox
+                              v-model="usuario.avisos"
+                              color="info"
+                              label="Avisos"
+                              hide-details
+                            ></v-checkbox>
+                      </v-col>
+                    </v-row>
                   <!-- Modal status http request -->
                   <v-row v-if="alertShow">
                     <v-col cols="12" class="px-0">
@@ -133,7 +143,8 @@ export default {
         email: "",
         password: "",
         empresa: "",
-        rol: ""
+        rol: "",
+        avisos: false
       },
       listRol: [
                   {text: "Administrador", value: 0},
@@ -158,8 +169,8 @@ export default {
               this.alertMsg = "Usuario actualizado correctamente"
               this.alertType = "success"
               this.alertShow = true;
-              this.$refs.form.reset();
               this.$emit('click');
+              this.hide();
             })
       }
       } catch (error) {
@@ -182,6 +193,7 @@ export default {
     },
       hide(){
         this.$refs.form.reset();
+        this.alertShow = false
         this.dialog = false;
       },
   }

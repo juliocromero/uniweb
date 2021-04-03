@@ -114,11 +114,13 @@
                     :id="item.id"
                     class="mr-2"
                     @click="getDataTable"
+                    v-if="isRolUser"
                   />
                   <eliminar-equipo
                     :id="item.id"
                     :tag="item.tag"
                     @click="getDataTable"
+                    v-if="isRolUser"
                   />
                 </v-row>
               </template>
