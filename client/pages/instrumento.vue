@@ -33,6 +33,20 @@
                   <v-spacer></v-spacer>
 
                   <agregar-instrumento @click="getInstrumentos" :intrumento='intrumentoRefresh' @instrumentoCreado="getInstrumentos" v-if="isRolUser"/>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        style="margin-left: 5px;"
+                        outlined
+                        color="success"
+                        v-bind="attrs"
+                        @click="DescargaCSV(tableData)"
+                        v-on="on"
+                        ><v-icon>file_download </v-icon></v-btn
+                      >
+                    </template>
+                    <span>Descarga CSV</span>
+                  </v-tooltip>
                 </v-toolbar>
               </template>
 
@@ -167,6 +181,7 @@ export default {
         console.log(error)
       }
     },
+    
 
     setColorEstado(item) {
       switch (item.estadoId) {
@@ -193,6 +208,22 @@ export default {
       this.desde = desde;
       this.hasta = hasta;
       this.getInstrumentos()
+    },
+     DescargaCSV(){
+      let csvContent = "data:text/csv;charset=utf-8,";
+      
+       csvContent += [
+        Object.keys(this.tableData[0]).join(";"),
+        ...this.tableData.map((item) => Object.values(item).join(";")),
+      ]
+        .join("\n")
+        .replace(/(^\[)|(\]$)/gm, "");
+
+      const data = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", data);
+      link.setAttribute("download", "plantilla.csv");
+      link.click();
     }
   },
   watch: {

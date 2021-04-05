@@ -23,7 +23,7 @@
         >
         <v-form ref="form" lazy-validation v-model="valid">
           <v-list shaped>
-            <v-list-item-group color="primary" v-if="items.length > 0" >
+            <v-list-item-group color="primary" v-if="false" >
               <v-list-item v-for="(item, i) in items" :key="i">
                 <v-list-item-icon>
                   <v-icon>article</v-icon>
@@ -56,9 +56,11 @@
               @change="SubirArchivos"
             >
             </v-file-input>
-            <v-btn color="error" text @click="hide">
+            <v-col style="margin-top:15px">
+               <v-btn color="error" text @click="hide">
                 Cancelar
               </v-btn>
+            </v-col>
           </div>
         </v-form>
       </v-card>
