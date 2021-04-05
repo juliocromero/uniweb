@@ -45,17 +45,26 @@
             </v-list-item-group>
           </v-list>
           <v-divider></v-divider>
-          <div width="100%" class="d-flex justify-center m2">
+          <div width="100%" class="d-flex justify-center align-center">
+          <!-- <v-file-input
+            max-width="100"
+            truncate-length="15"
+            v-model="files"
+            :hide-details="true"
+            placeholder="Cargar Archivo"
+            outlined
+            :show-size="1000"
+          >
+          </v-file-input> -->
+
             <v-file-input
-              class="input-file"
-              max-width="100"
+              class="file-input"
               v-model="files"
-              placeholder="Cargar Archivo"
-              outlined
-              :show-size="1000"
-              @change="SubirArchivos"
-            >
-            </v-file-input>
+              show-size
+              truncate-length="5"              
+            ></v-file-input>
+            <v-btn  text color="primary"
+              @click="SubirArchivos">Cargar</v-btn>
             <v-btn color="error" text @click="hide">
                 Cancelar
               </v-btn>
@@ -94,6 +103,8 @@ export default {
       files: null,
     }
   },
+  computed:{
+  },
   methods: {
     hide() {
       this.dialog = false
@@ -125,12 +136,11 @@ export default {
         console.log(error)
       }
     },
-    async SubirArchivos(event) {
-      console.log(event)
+    async SubirArchivos() {
       let items = new FormData()
       items.append('instrumento_marca', this.equipo.instrumento_marca)
       items.append('instrumento_modelo', this.equipo.instrumento_modelo)
-      items.append('pdfIns', event)
+      items.append('pdfIns', this.files)
       
       try {
         await axios
@@ -140,7 +150,9 @@ export default {
             },
             responseType: 'blob',
           })
-          .then((response) => {})
+          .then((response) => {
+            this.archivosFile()
+          })
       } catch (error) {
         this.alert = true
       }
@@ -169,42 +181,11 @@ export default {
       }
     },
   },
-  computed: {
-    /*  sectores(){
-      if (this.equipo){
-      let sector = [`storage/archivos/instrumentos/${this.equipo.instrumento_marca }/${ this.equipo.instrumento_modelo }/`]
-      return sector
-      }
-      return ''
-      
-    } */
-  },
 }
 </script>
 
 <style>
-.input-file > .v-input__control {
-}
-.input-file {
-  background-color:white !important;
-  text-align: center;
-  transition: none;
-}
-.input-file > .v-input__control > .v-input__slot {
-  margin:0px;
-  padding: 0px;
-  border: none;
-  background:rgb(135, 165, 204);
-  width: 200px;
-  height: 40px;
-  min-height: 0px;
-  font-size: 1rem;
-}
-.input-file > .v-input__control > .v-input__slot:hover{
-  cursor: pointer;
-  border: 2px solid rgb(111, 111, 165) !important;
-}
-.file-download:hover{
-  color: rgb(94, 192, 94);
+.file-input{
+  min-width:10px;
 }
 </style> 
