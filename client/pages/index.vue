@@ -6,10 +6,10 @@
           <v-col class="d-flex pb-0 pl-1">
             <div class="overline">Sectores</div>
             <v-spacer />
-            <agregar-sector @reloag="reloag" v-if="isRolUser"/>
+            <agregar-sector @reloag="reloag" v-if="isRolUser" />
           </v-col>
           <v-divider></v-divider>
-          <div>
+          <div class="sectores-sider">
             <v-treeview
               rounded
               hoverable
@@ -20,9 +20,11 @@
               v-on:update:active="filtrarTabla"
               style="cursor: pointer"
             >
-              <template v-slot:append="{item}" v-if="isRolUser" >
+              <template v-slot:append="{ item }" v-if="isRolUser">
                 <div class="delete-sector">
-               <v-icon @click="DeleteSector(item)" class="borrar">delete_forever</v-icon>
+                  <v-icon @click="DeleteSector(item)" class="borrar"
+                    >delete_forever</v-icon
+                  >
                 </div>
               </template>
             </v-treeview>
@@ -72,7 +74,22 @@
                   >
                     Limpiar Filtros
                   </v-btn>
-                  <agregar-equipo @click="getDataTable" v-if="isRolUser"/>
+
+                  <agregar-equipo @click="getDataTable" v-if="isRolUser" />
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        style="margin-left: 5px; margin-top: -7px"
+                        outlined
+                        color="success"
+                        v-bind="attrs"
+                        @click="DescargaCSV(tableData)"
+                        v-on="on"
+                        ><v-icon>file_download </v-icon></v-btn
+                      >
+                    </template>
+                    <span>Descarga CSV</span>
+                  </v-tooltip>
                 </v-toolbar>
               </template>
 
@@ -96,11 +113,8 @@
               </template>
 
               <template v-slot:[`item.estadoName`]="{ item }">
-                <v-chip
-                :color="setColorEstado(item)"
-                text-color="white"
-                >
-                  {{item.estadoName}}
+                <v-chip :color="setColorEstado(item)" text-color="white">
+                  {{ item.estadoName }}
                 </v-chip>
               </template>
 
@@ -132,7 +146,12 @@
           </v-card>
         </v-col>
       </v-row>
-      <eliminar-sector :sectorModal="sectorDeleteModal" :sector="sectorDelete" @input="closeModal" @deleteOk="deleteOkSector"/>
+      <eliminar-sector
+        :sectorModal="sectorDeleteModal"
+        :sector="sectorDelete"
+        @input="closeModal"
+        @deleteOk="deleteOkSector"
+      />
     </v-container>
   </div>
 </template>
@@ -162,7 +181,7 @@ export default {
     EditarEquipo,
     DescargarCetificado,
     AgregarSector,
-    eliminarSector
+    eliminarSector,
   },
   data: () => ({
     sectorDelete: [],
@@ -190,7 +209,7 @@ export default {
       { text: 'Tag', align: 'start', value: 'tag' },
       { text: 'Descripción', value: 'descripcion', align: 'start' },
       { text: 'Sector', value: 'sectorName', align: 'center' },
-      { text: 'Estado', value: 'estadoName', align: 'center'},
+      { text: 'Estado', value: 'estadoName', align: 'center' },
       { text: 'Próxima', value: 'proximaCalib', align: 'center' },
       { text: 'Encargado', value: 'empresa', align: 'center' },
       { text: 'Acciones', value: 'acciones', sortable: false, align: 'center' },
@@ -203,12 +222,12 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? 'Nuevo' : 'Editar'
     },
-    isRolUser(){    
-      if(this.rolUser == 0){
+    isRolUser() {
+      if (this.rolUser == 0) {
         return true
       }
       return false
-    }
+    },
   },
   filters: {
     fecha(v) {
@@ -232,15 +251,14 @@ export default {
           return 'gray'
       }
     },
-    deleteOkSector(){
+    deleteOkSector() {
       this.fillItems()
     },
     closeModal() {
       this.sectorDeleteModal = false
     },
-    DeleteSector(item){
-      this.sectorDelete = item,
-      this.sectorDeleteModal = true
+    DeleteSector(item) {
+      ;(this.sectorDelete = item), (this.sectorDeleteModal = true)
     },
     reloag() {
       this.fillItems()
@@ -288,15 +306,16 @@ export default {
     },
     async downloadUltCert(id) {
       try {
-        await axios.get('download/lastcert',{
-          headers: { Authorization: `Bearer ${this.token}`},
-          responseType: 'blob',
-          params: { id }
-        }).then(response => {
-            const content = response.headers['content-type'];
+        await axios
+          .get('download/lastcert', {
+            headers: { Authorization: `Bearer ${this.token}` },
+            responseType: 'blob',
+            params: { id },
+          })
+          .then((response) => {
+            const content = response.headers['content-type']
             download(response.data, 'ultimo.pdf', content)
-        })
-
+          })
       } catch (error) {
         alert(await error.response.data.text())
       }
@@ -342,6 +361,32 @@ export default {
         this.desserts.push(this.editedItem)
       }
       this.close()
+    },
+    DescargaCSV() {
+      let csvContent = 'data:text/csv;charset=utf-8,'
+      let value = this.tableData.map((val) => {
+        let res = {
+          "Sector": val.sectorName,
+          "Tag": val.tag,
+          "Descripcion": val.descripcion,
+          "Encargado": val.empresa,
+          "Estado": val.estadoName,
+          "Proxima Calibración": val.proximaCalib
+        }
+        return res
+      })
+      csvContent += [
+        Object.keys(value[0]).join(';'),
+        ...value.map((item) => Object.values(item).join(';')),
+      ]
+        .join('\n')
+        .replace(/(^\[)|(\]$)/gm, '')
+      console.log(csvContent)
+      const data = encodeURI(csvContent)
+      const link = document.createElement('a')
+      link.setAttribute('href', data)
+      link.setAttribute('download', 'plantilla.csv')
+      link.click()
     },
   },
   watch: {
@@ -400,11 +445,14 @@ a {
 .txt-treview {
   margin-top: 15px;
 }
-.borrar:hover{
+.borrar:hover {
   color: red;
-
 }
-.delete-sector{
+.delete-sector {
   z-index: 20;
+}
+.sectores-sider {
+  max-height: 70vh;
+  overflow: auto;
 }
 </style>

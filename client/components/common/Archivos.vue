@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-start">
+  <div class="d-flex justify-start container-archivo">
     <v-tooltip bottom>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -17,7 +17,7 @@
       <span>Archivos</span>
     </v-tooltip>
     <v-dialog v-model="dialog" width="500">
-      <v-card>
+      <v-card class="container-list">
         <v-card-title class="headline white--text blue darken-4"
           >Archivo</v-card-title
         >
@@ -72,6 +72,14 @@
         </v-form>
       </v-card>
     </v-dialog>
+    <v-snackbar
+      v-model="archivoCargado"
+      :timeout="2000"
+      color="success"
+    >
+      Archivo Cargado Con Exito!
+
+    </v-snackbar>
   </div>
 </template>   
 
@@ -89,6 +97,7 @@ export default {
   },
   data() {
     return {
+      archivoCargado: false,
       manual: false,
       valid: false,
       token: Cookies.get('token'),
@@ -152,6 +161,8 @@ export default {
           })
           .then((response) => {
             this.archivosFile()
+            this.archivoCargado = true
+            this.files = null
           })
       } catch (error) {
         this.alert = true
@@ -185,6 +196,9 @@ export default {
 </script>
 
 <style>
+.container-list{
+  overflow: auto;
+}
 .file-input{
   min-width:10px;
 }
