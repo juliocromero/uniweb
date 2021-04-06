@@ -153,6 +153,7 @@
         @deleteOk="deleteOkSector"
       />
     </v-container>
+    {{options}}
   </div>
 </template>
 
@@ -362,9 +363,49 @@ export default {
       }
       this.close()
     },
-    DescargaCSV() {
+    async DescargaCSV() {
+      let file = await this.archiveAll()
+      if (file){
+         await this.DownloadArchive(file)
+      }
+     
+      
+    },
+    async archiveAll(){
+       this.loading = true
+       let page = this.options;
+       page.itemsPerPage = 'all'
+      return await axios
+        .get('tablaequipos', {
+          headers: { Authorization: `Bearer ${this.token}` },
+          params: {
+            desde: this.desde,
+            hasta: this.hasta,
+            options: page,
+            buscar: this.txtBuscar,
+            filtroTree: this.filtroTree,
+          },
+        })
+        .then((res) => {
+          res.data.tableItemsData.forEach((it) => {
+            var auxRuta = this.listRutas.find((el) => el.i == it.sector_id)
+
+            if (auxRuta !== undefined) {
+              it.sectorName = auxRuta.ruta
+            } else {
+              it.sectorName = 'Error en ruta'
+            }
+          })
+    
+          
+          
+          return res.data.tableItemsData
+        })
+
+    },
+    DownloadArchive(file){
       let csvContent = 'data:text/csv;charset=utf-8,'
-      let value = this.tableData.map((val) => {
+      let value = file.map((val) => {
         let res = {
           "Sector": val.sectorName,
           "Tag": val.tag,
@@ -381,13 +422,13 @@ export default {
       ]
         .join('\n')
         .replace(/(^\[)|(\]$)/gm, '')
-      console.log(csvContent)
       const data = encodeURI(csvContent)
       const link = document.createElement('a')
       link.setAttribute('href', data)
       link.setAttribute('download', 'plantilla.csv')
       link.click()
-    },
+      this.loading = false
+    }
   },
   watch: {
     options: {
