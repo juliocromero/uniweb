@@ -21,8 +21,13 @@
                 style="cursor: pointer"
               >
                 <template v-slot:append="{item}" v-if="isRolUser" >
-                  <div class="delete-sector">
-                <v-icon @click="DeleteSector(item)" class="borrar">delete_forever</v-icon>
+                  <div class="d-flex">
+                    <div class="delete-sector">
+                      <editar-sector :sectorData="item" @reloag="fillItems"/>
+                    </div>
+                    <div class="delete-sector">
+                      <v-icon @click="DeleteSector(item)" class="borrar">delete_forever</v-icon>
+                    </div>
                   </div>
                 </template>
               </v-treeview>
@@ -165,6 +170,8 @@ import EditarEquipo from '~/components/common/EditarEquipo.vue'
 import EliminarEquipo from '~/components/common/EliminarEquipo.vue'
 import DescargarCetificado from '~/components/common/DescargarCetificado.vue'
 import AgregarSector from '~/components/common/AgregarSector.vue'
+
+import EditarSector from '~/components/common/editarSector.vue'
 import download from 'downloadjs'
 
 export default {
@@ -176,7 +183,8 @@ export default {
     EditarEquipo,
     DescargarCetificado,
     AgregarSector,
-    eliminarSector
+    eliminarSector,
+    EditarSector
   },
   data: () => ({
     sectorDelete: [],

@@ -56,14 +56,14 @@
               Cambiar Contraseña
             </v-list-item-title>
           </v-list-item>
-           <v-list-item class="menuUser poiter" to="/Panel" v-if="isRolUser">
+           <v-list-item class="menuUser pointer" to="/Panel" v-if="isRolUser">
             <v-list-item-title>
               <v-icon left color="#295382" >settings</v-icon>
               Panel De Control
             </v-list-item-title>
           </v-list-item>
-          <v-list-item class="menuUser poiter">
-            <v-list-item-title @click="SET_DESLOGIN()">
+          <v-list-item class="menuUser pointer" @click="SET_DESLOGIN()">
+            <v-list-item-title >
               <v-icon left color="#295382" >west</v-icon>
               Salir
             </v-list-item-title>

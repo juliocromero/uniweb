@@ -18,14 +18,19 @@
                       {{ item.descripcion }}
                     </v-card-subtitle>
                   </v-col>
-
-                  <v-col cols="12" sm="4" class="d-flex justify-end">
+                  <v-col v-if="isRolRecoment" cols="12" sm="4" class="d-flex justify-end ">
                     <v-img class="input-file-wrap" :src="IsImg">
+                      <div>
                       <input
                         type="file"
                         @change="CargarImg"
                         class="input-file"
                       />
+                      </div>
+                    </v-img>
+                  </v-col>
+                   <v-col v-else cols="12" sm="4" class="d-flex justify-end ">
+                    <v-img class="input-file-wrap" :src="IsImg">
                     </v-img>
                   </v-col>
                 </v-row>
@@ -686,6 +691,12 @@ export default {
   },
   computed: {
     ...mapState(['rolUser']),
+    isRolRecoment(){
+      if (this.rolUser === 0){
+        return true
+      }
+      return false
+    },
     IsImg() {
       let id = this.$route.params.id
       let imgRutas = `http://192.168.195.98:3333/archivos/equipo/${id}/imagen${id}.jpg`
@@ -912,11 +923,11 @@ export default {
 .input-file {
   width: 100%;
   height: 100%;
-  font-size: 100px;
   position: absolute;
   left: 0;
   top: 0;
   opacity: 0;
+  cursor:pointer;
 }
 .style-vencido {
   background-color: rgb(215, 215, 44);
@@ -939,7 +950,6 @@ export default {
   max-width: 245px !important;
   overflow: hidden;
   position: relative;
-  cursor: pointer;
   border-radius: 7px;
   border: 3px inset #2a67a5;
 }
