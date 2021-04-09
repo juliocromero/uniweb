@@ -76,18 +76,18 @@
       <v-row>
         <v-col>
           <v-img
-          max-height="80"
-          max-width="120"
+          max-height="130"
+          max-width="170"
           alt="PX Control"
           src="/logo.png"
         ></v-img>
         </v-col>
          <v-col class="d-flex justify-end">
           <v-img
-          max-height="80"
-          max-width="120"
+          max-height="130"
+          max-width="170"
           alt="PX Control"
-          src="/logo.png"
+          src="/Logo-tec2.png"
         ></v-img>
         </v-col>
       </v-row>

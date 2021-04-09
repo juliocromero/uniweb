@@ -112,7 +112,6 @@ export default {
            await axios.put("change_pass",data,
            {headers: { Authorization: `Bearer ${token}` }})
            .then(res => {
-             console.log('response',res)
              this.AlertCambioPassword = true
              this.mensajeCambioPassword = res.data.menssage
              if(res.data.menssage === 'Cambio de contraseña con exito!'){

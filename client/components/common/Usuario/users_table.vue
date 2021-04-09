@@ -1,6 +1,6 @@
 <template>
 <v-container class="d-flex justify-center">
-          <v-card max-width="600px">
+          <v-card max-width="1000px">
           
             <v-divider></v-divider>
         <v-container class="pt-0">
@@ -9,6 +9,7 @@
               :items="tableData"
               :options.sync="options"
               :loading="loading"
+              :search="txtBuscar"
               multi-sort
               class="elevation-1"
             >
@@ -19,7 +20,7 @@
                     label="Buscar"
                     single-line
                     hide-details
-                    @keyup.enter="date"
+                    
                     v-model="txtBuscar"
                   ></v-text-field>
 

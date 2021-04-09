@@ -245,7 +245,6 @@ export default {
    async agregarInstrumento(){
       try {
         if(this.$refs.form.validate()){
-          console.log(this.instrumento)
           await axios.post('instrumento', this.instrumento ,{
               headers: { Authorization: `Bearer ${this.token}` },
             })
@@ -279,7 +278,6 @@ export default {
             for (const item of res.data.data) {
               this.instrumentoTipo.push({ text:item.nombre , value:item.id});
             }
-            console.log('instrumento Tipo:', this.instrumentoTipo);
           })
           } catch (error) {
             console.log(error)
@@ -294,7 +292,6 @@ export default {
             for (const item of res.data.data) {
               this.instrumentoUnidad.push({ text: item.nombre , value: item.id});
             }
-            console.log('instrumento Unidad:', this.instrumentoUnidad);
           })
 
           } catch (error) {
@@ -311,7 +308,6 @@ export default {
         for (const item of res.data.data) {
            this.instrumentoMagnitud.push({ text: item.nombre , value: item.id});
         }
-        console.log('instrumento Magnitud:', this.instrumentoMagnitud);
       })
 
       } catch (error) {

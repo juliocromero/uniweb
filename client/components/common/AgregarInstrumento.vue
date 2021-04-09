@@ -259,7 +259,6 @@ export default {
               headers: { Authorization: `Bearer ${this.token}` },
             })
             .then((res)=>{
-              console.log('instrumento creado',res)
               this.alertMsg = "Instrumento agregado correctamente"
               this.alertType = "success"
               this.alertShow = true;

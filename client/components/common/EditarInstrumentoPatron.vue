@@ -251,7 +251,6 @@ export default {
             headers: { Authorization: `Bearer ${this.token}` },
           })
           .then((res)=>{
-            console.log('getIntrumento:',res.data.data);
             this.instrumento = res.data.data;   
           })
           } catch (error) {

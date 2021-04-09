@@ -33,7 +33,7 @@
                   <v-spacer></v-spacer>
 
                   <agregar-instrumento @click="getInstrumentos" :intrumento='intrumentoRefresh' @instrumentoCreado="getInstrumentos" v-if="isRolUser"/>
-                  <v-tooltip bottom>
+                <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         style="margin-left: 5px;"
@@ -178,10 +178,10 @@ export default {
             this.loading = false;
           })
       } catch (error) {
+        this.loading = false;
         console.log(error)
       }
     },
-    
 
     setColorEstado(item) {
       switch (item.estadoId) {
@@ -209,21 +209,70 @@ export default {
       this.hasta = hasta;
       this.getInstrumentos()
     },
-     DescargaCSV(){
-      let csvContent = "data:text/csv;charset=utf-8,";
-      
-       csvContent += [
-        Object.keys(this.tableData[0]).join(";"),
-        ...this.tableData.map((item) => Object.values(item).join(";")),
+    async DescargaCSV(){
+     let file = await this.archiveAll();
+      if (file){
+         this.DownloadArchive(file)
+      }
+    },
+    async archiveAll(){
+        try {
+       this.loading = true
+       let page = this.options;
+       page.itemsPerPage = 'all'
+        await axios
+          .get('instrumentos', {
+            headers: { Authorization: `Bearer ${this.token}`}, 
+            params:{ options: page, isPatron: false },   
+          })
+          .then((res) => {
+            //console.log(res)
+            this.tableData = res.data.data.data;
+            console.log(this.tableData)
+            this.loading = false;
+            
+          })
+          return this.tableData
+      } catch (error) {
+        console.log(error)
+      }
+    },
+     DownloadArchive(file){
+      let csvContent = 'data:text/csv;charset=utf-8,'
+      let value = file.map((val) => {
+        let res = {
+          "Equipo": val.tag,
+          "Serie": val.serie,
+          "Marca": val.marca,
+          "Modelo": val.modelo,
+          "Estado": val.estado_name,
+          "Rango De": val.rango_de,
+          "Rango A": val.rango_a,
+          "Rango Norm. De": val.rango_normal_de,
+          "Rango Norm. A": val.rango_normal_a,
+          "Resolucion": val.resolucion,
+          "Tolerancia": val.tolerancia,
+          "Tipo": val.tipo_name,
+          "Unidad": val.unidad,
+          "Magnitud": val.magnitud,
+          "Encargado": val.empresa,
+          "Creado": val.created_at,
+          "Actuliazado": val.updated_at
+        }
+        return res
+      })
+      csvContent += [
+        Object.keys(value[0]).join(';'),
+        ...value.map((item) => Object.values(item).join(';')),
       ]
-        .join("\n")
-        .replace(/(^\[)|(\]$)/gm, "");
-
-      const data = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", data);
-      link.setAttribute("download", "plantilla.csv");
-      link.click();
+        .join('\n')
+        .replace(/(^\[)|(\]$)/gm, '')
+      const data = encodeURI(csvContent)
+      const link = document.createElement('a')
+      link.setAttribute('href', data)
+      link.setAttribute('download', 'plantilla.csv')
+      link.click()
+      this.loading = false
     }
   },
   watch: {

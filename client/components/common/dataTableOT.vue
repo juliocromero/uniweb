@@ -188,7 +188,6 @@ export default {
       this.currentItem.updated = new Date(Date.now()).toISOString().slice(0,10);
       this.currentItem.imagenes = this.files
       this.arrayOT.push(this.currentItem);
-      console.log(this.currentItem);
       this.currentItem = {
         updated:this.fecha,
         item: this.arrayOT ? this.arrayOT.length + 1 : 1,

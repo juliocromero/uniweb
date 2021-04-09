@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     exportPDF() {
-      console.log("Imprimiendo PDF");
+
       const cols = [
         { title: 'Tag', dataKey: 'tag' },
         { title: 'Descripción', dataKey: 'descripcion' },

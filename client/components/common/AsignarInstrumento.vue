@@ -330,7 +330,6 @@ export default {
             for (const item of res.data.data) {
               this.instrumentosTipo.push({value:item.id, text:item.nombre});
             }
-            console.log('instrumento Tipo:', this.instrumentosTipo);
           })
           } catch (error) {
             console.log(error)

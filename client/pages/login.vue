@@ -51,8 +51,8 @@
             <v-col>
                <v-img
                 style="border-radius: 7px; margin-top: 20px; background-color: white;"
-                max-height="70"
-                max-width="120"
+                max-height="130"
+                max-width="170"
                 alt="PX Control"
                 src="/logo.png"
               ></v-img>
@@ -60,8 +60,8 @@
             <v-col class="d-flex justify-end">
                <v-img
                 style="border-radius: 7px; margin-top: 20px; background-color: white;"
-                max-height="70"
-                max-width="120"
+                max-height="130"
+                max-width="170"
                 alt="PX Control"
                 src="/logo.png"
               ></v-img>
@@ -102,7 +102,7 @@ layout: "layoutnull",
         .then(res => {
           
           if (res.data) {
-            console.log('dataToken:', res.data)
+            console.log(res.data)
             this.setUser(res.data.user)
             this.SET_AUTH(res.data)
           }

@@ -88,7 +88,6 @@ export default {
   },
   methods: {
       onAddFiles(files) {
-        console.log('It works')
         this.previews = []
         files.forEach((file, index) => {
           const reader = new FileReader()

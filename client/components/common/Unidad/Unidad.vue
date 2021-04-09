@@ -10,6 +10,7 @@
               :items="tableData"
               :options.sync="options"
               :loading="loading"
+              :search="txtBuscar"
               multi-sort
               class="elevation-1"
             >
@@ -20,7 +21,6 @@
                     label="Buscar"
                     single-line
                     hide-details
-                    @keyup.enter="date"
                     v-model="txtBuscar"
                   ></v-text-field>
 

@@ -8,14 +8,11 @@
               <v-container class="py-0">
                 <v-row>
                   <v-col cols="12" sm="8" class="pb-0">
-                    <v-card-title class="pt-0"> 
-                      {{ item.tag }} 
-                      <v-chip
-                      style="margin-left: 10px"
-                      :color="estadoColor"
-                      >
-                        {{estadoText}}
-                    </v-chip>
+                    <v-card-title class="pt-0">
+                      {{ item.tag }}
+                      <v-chip style="margin-left: 10px" :color="estadoColor">
+                        {{ estadoText }}
+                      </v-chip>
                     </v-card-title>
                     <v-card-subtitle class="pb-0">
                       {{ item.descripcion }}
@@ -23,22 +20,13 @@
                   </v-col>
 
                   <v-col cols="12" sm="4" class="d-flex justify-end">
-                    <div class="input-file-wrap">
-                      <v-img
-                        style="border-radius: 7px"
-                        src="../indus.jpg"
-                        alt="No hay imagen"
-                        class="img"
-                      ></v-img>
-                    </div>
-
-                    <div class="input-file-wrap" v-if="item.img">
-                      <v-file-input
-                      hide-input
-                      accept="image/*"
-                      @change="setImage"
+                    <v-img class="input-file-wrap" :src="IsImg">
+                      <input
+                        type="file"
+                        @change="CargarImg"
+                        class="input-file"
                       />
-                    </div>
+                    </v-img>
                   </v-col>
                 </v-row>
               </v-container>
@@ -158,10 +146,10 @@
                       @reload="reloadCambioEquipo"
                       class="ml-3"
                     />
-                     <archivos
-                     :equipo="item"
-                     style="margin-left: 2px"
-                     class="ml-3"
+                    <archivos
+                      :equipo="item"
+                      style="margin-left: 2px"
+                      class="ml-3"
                     />
                   </v-col>
                 </v-row>
@@ -374,9 +362,7 @@
                     sortDesc="[DESC]"
                     height="420"
                   >
-                  <template v-slot="">
-
-                  </template>
+                    <template v-slot=""> </template>
                   </v-data-table>
                 </v-card>
               </v-col>
@@ -385,10 +371,10 @@
         </v-card>
       </v-container>
 
-      <v-container  >
+      <v-container>
         <v-card color="#FAFAFA">
           <v-container>
-            <v-row >
+            <v-row>
               <v-col cols="12" sm="6">
                 <v-row>
                   <v-col class="d-flex pr-1">
@@ -418,17 +404,17 @@
                     disable-pagination
                     height="515"
                   >
-
-                    <template v-slot:[`item.calibracion_tarea_proxima`]="{ item }">
-                      <v-chip
-                      :color="setColorEstado(item)"
-                      text-color="white"
-                      >
-                        {{item.calibracion_tarea_proxima}}
+                    <template
+                      v-slot:[`item.calibracion_tarea_proxima`]="{ item }"
+                    >
+                      <v-chip :color="setColorEstado(item)" text-color="white">
+                        {{ item.calibracion_tarea_proxima }}
                       </v-chip>
                     </template>
 
-                    <template v-slot:[`item.calibracion_tarea_habilitada`]="{ item }">
+                    <template
+                      v-slot:[`item.calibracion_tarea_habilitada`]="{ item }"
+                    >
                       <v-checkbox
                         v-model="item.calibracion_tarea_habilitada"
                         color="info"
@@ -440,43 +426,43 @@
                     <template v-slot:[`item.acciones`]="item">
                       <div class="d-flex">
                         <cargar-tarea-calibracion-realizada
-                        :calibracion_tarea_id="item.item.num_tarea"
-                        :user_id_for_admin="encargadoID"
-                        @click="getTareasRealizadas"
-                        class="mr-2"
-                      />
-                         <editar-tarea-calibracion
-                         v-if="rolUser == 0"
-                        class="mr-2"
-                        :calibracionItem="item.item"
-                        :calibracion_tarea_id="item.item.num_tarea"
-                        @click="getTareasRealizadas"
-                        :user_id_for_admin="encargadoID"
-                        @reload="GetRealoadItems"
-                      />
+                          :calibracion_tarea_id="item.item.num_tarea"
+                          :user_id_for_admin="encargadoID"
+                          @click="getTareasRealizadas"
+                          class="mr-2"
+                        />
+                        <editar-tarea-calibracion
+                          v-if="rolUser == 0"
+                          class="mr-2"
+                          :calibracionItem="item.item"
+                          :calibracion_tarea_id="item.item.num_tarea"
+                          @click="getTareasRealizadas"
+                          :user_id_for_admin="encargadoID"
+                          @reload="GetRealoadItems"
+                        />
 
-                      <eliminar-tarea-calibracion :id="item.item.num_tarea" @click="getEquipo" v-if="rolUser == 0"/>
+                        <eliminar-tarea-calibracion
+                          :id="item.item.num_tarea"
+                          @click="getEquipo"
+                          v-if="rolUser == 0"
+                        />
                       </div>
                     </template>
                   </v-data-table>
                 </v-card>
               </v-col>
-              <v-col cols="12" sm="6" >
+              <v-col cols="12" sm="6">
                 <div class="overline">CERTIFICADOS</div>
                 <v-divider></v-divider>
                 <div class="is-flex">
-                  <filtro @click="filterByDate" ref="Filtro"/>
+                  <filtro @click="filterByDate" ref="Filtro" />
                   <div width="100%" class="d-flex justify-end align-center">
-                      <v-btn
-                          text
-                          color="error"
-                          @click="limpiarFiltros"
-                        >
-                        Limpiar Filtros
-                      </v-btn>
+                    <v-btn text color="error" @click="limpiarFiltros">
+                      Limpiar Filtros
+                    </v-btn>
                   </div>
                 </div>
-                
+
                 <v-divider></v-divider>
                 <v-card
                   height="425"
@@ -494,11 +480,15 @@
                     no-data-text="Sin datos"
                     height="360"
                   >
-                 
                     <template v-slot:[`item.patron`]="{ item }">
-                      <template  v-if="!item.patron_isString">
-                        <nuxt-link :to="`../detalle_patron/${it.id}?desde=${item.fecha}`" :exact="true" v-for="it in item.patron" :key="it.id">
-                          <v-tooltip bottom >
+                      <template v-if="!item.patron_isString">
+                        <nuxt-link
+                          :to="`../detalle_patron/${it.id}`"
+                          :exact="true"
+                          v-for="it in item.patron"
+                          :key="it.id"
+                        >
+                          <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
                               <v-btn
                                 v-on="on"
@@ -516,8 +506,8 @@
                           </v-tooltip>
                         </nuxt-link>
                       </template>
-                      <template  v-if="item.patron_isString">
-                        {{item.patron}}
+                      <template v-if="item.patron_isString">
+                        {{ item.patron }}
                       </template>
                     </template>
 
@@ -570,7 +560,7 @@ import AgregarCalibracion from '~/components/common/AgregarCalibracion.vue'
 import CargarTareaCalibracionRealizada from '~/components/common/CargarTareaCalibracionRealizada.vue'
 import download from 'downloadjs'
 import moment from 'moment'
-import {mapState , mapMutations} from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import EliminarTareaCalibracion from '../../components/common/EliminarTareaCalibracion.vue'
 
 export default {
@@ -584,13 +574,14 @@ export default {
     AsignarInstrumento,
     EditarTareaCalibracion,
     EliminarTareaCalibracion,
-    Archivos
+    Archivos,
   },
   layout: 'equipo',
   data() {
     return {
       paramsId: null,
       equipo: [],
+      img: '',
       desde: null,
       hasta: null,
       encargadoID: null,
@@ -631,7 +622,7 @@ export default {
         serie_requerido: null,
         tag: '',
         tipo_instrumento: '',
-        userID: null
+        userID: null,
       },
       headersEquiposAsignados: [
         { text: 'Equipo', align: 'start', value: 'equipo' },
@@ -645,7 +636,12 @@ export default {
         { text: ' Fecha Realización', sortable: false, value: 'fecha' },
         { text: 'Encargado', sortable: false, value: 'realizo' },
         { text: 'Patrón', sortable: false, value: 'patron' },
-        { text: 'Certificado', sortable: false, align: 'center', value: 'certificado' },
+        {
+          text: 'Certificado',
+          sortable: false,
+          align: 'center',
+          value: 'certificado',
+        },
       ],
       headersTareasCalibracion: [
         { text: 'N°', align: 'start', value: 'num_tarea' },
@@ -654,45 +650,104 @@ export default {
           align: 'center',
           value: 'calibracion_tarea_tipo',
         },
-        { text: 'Frecuencia', value: 'calibracion_tarea_frecuencia', align: 'center' },
-        { text: 'Ultima Efectuada', value: 'calibracion_tarea_ult_efectuada', align: 'center' },
+        {
+          text: 'Frecuencia',
+          value: 'calibracion_tarea_frecuencia',
+          align: 'center',
+        },
+        {
+          text: 'Ultima Efectuada',
+          value: 'calibracion_tarea_ult_efectuada',
+          align: 'center',
+        },
         {
           text: 'Proxima Calibracion',
           align: 'center',
           value: 'calibracion_tarea_proxima',
         },
         {
-          text: 'Habilitada', value: 'calibracion_tarea_habilitada', align: 'center'
+          text: 'Habilitada',
+          value: 'calibracion_tarea_habilitada',
+          align: 'center',
         },
-        { text: 'Acciones', value: 'acciones', sortable: false, align: 'center'},
+        {
+          text: 'Acciones',
+          value: 'acciones',
+          sortable: false,
+          align: 'center',
+        },
       ],
       tareasCalibracion: [],
       tareasRealizadas: [],
       optionsCertificados: {},
       totalCertificados: 0,
-      loadingCertificados: false
+      loadingCertificados: false,
     }
   },
-  computed:{
-    ...mapState(['rolUser'])
+  computed: {
+    ...mapState(['rolUser']),
+    IsImg() {
+      let id = this.$route.params.id
+      let imgRutas = `http://192.168.195.98:3333/archivos/equipo/${id}/imagen${id}.jpg`
+      return imgRutas
+    },
   },
   methods: {
     ...mapMutations(['GET_NAME_INSTRUMENTO']),
-    GetRealoadItems(){
+    GetRealoadItems() {
       this.getEquipo()
+    },
+    async CargarImg(event) {
+      try {
+        const token = Cookies.get('token')
+        let file = event.target.files[0]
+        console.log(file)
+        let id = this.$route.params.id
+        let items = new FormData()
+        items.append('equipo_id', id)
+        items.append('img', file)
+        await axios
+          .post('imgEquipos', items, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((res) => {
+            console.log(res)
+            this.$router.go(0)
+          })
+      } catch (error) {
+        console.log(error)
+        console.log('Error al cargar la img')
+      }
+    },
+    async getImagen() {
+      try {
+        const token = Cookies.get('token')
+        let id = this.$route.params.id
+        console.log(id)
+        await axios
+          .get(
+            'imgEquipos',
+            { params: { equipo_id: id } },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          )
+          .then((res) => {
+            console.log(res)
+            this.img = res.data
+          })
+      } catch (error) {
+        console.log('Error al traer la img')
+      }
     },
     setColorEstado(item) {
       if (item.calibracion_tarea_habilitada) {
         if (moment().isAfter(item.calibracion_tarea_proxima)) {
           return 'red'
-        }
-        else
-        {
+        } else {
           return 'green'
         }
-      }
-      else
-      {
+      } else {
         return 'gray'
       }
     },
@@ -706,8 +761,6 @@ export default {
           })
           .then((res) => {
             this.listRutas = res.data.listRutas
-
-            console.log(this.listRutas)
           })
       } catch (error) {
         console.log('Error al traer rutas')
@@ -722,9 +775,8 @@ export default {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => {
-
             this.item = res.data.data[0].detalleEquipos
-            this.encargadoID = this.item.instrumento_encargado_id;
+            this.encargadoID = this.item.instrumento_encargado_id
 
             var auxRuta = this.listRutas.find(
               (el) => el.i == this.item.sector_id
@@ -736,20 +788,20 @@ export default {
               this.item.sector_name = 'Error en ruta'
             }
 
-            this.estadoText = this.item.instrumento_estado;
+            this.estadoText = this.item.instrumento_estado
 
             switch (this.item.instrumento_estado_id) {
               case 2:
                 this.estadoColor = 'green'
-                break;
+                break
 
               case 3:
                 this.estadoColor = 'red'
-                break;
-            
+                break
+
               default:
                 this.estadoColor = 'gray'
-                break;
+                break
             }
 
             this.tareasCalibracion = res.data.data[0].calibracion
@@ -766,7 +818,6 @@ export default {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => {
-            console.log('resEquipoAsignado:', res.data.data)
             this.equipoAsignado = res.data.data
           })
       } catch (error) {
@@ -777,25 +828,26 @@ export default {
       const token = Cookies.get('token')
 
       try {
-        this.loadingCertificados = true;
+        this.loadingCertificados = true
         await axios
           .get('TareaRealizada', {
             headers: { Authorization: `Bearer ${token}` },
-            params: { equipoID: this.$route.params.id,
-            desde: this.desde,
-            hasta: this.hasta,
-            options: this.optionsCertificados }
+            params: {
+              equipoID: this.$route.params.id,
+              desde: this.desde,
+              hasta: this.hasta,
+              options: this.optionsCertificados,
+            },
           })
           .then((res) => {
-            this.tareasRealizadas = res.data.data;
-            this.totalCertificados = res.data.total;
+            this.tareasRealizadas = res.data.data
+            this.totalCertificados = res.data.total
           })
       } catch (error) {
         console.log(error)
-      }
-      finally {
-        this.loadingCertificados = false;
-        this.getEquipo();
+      } finally {
+        this.loadingCertificados = false
+        this.getEquipo()
       }
     },
     async getCertificado(id, nombreArchivo) {
@@ -832,9 +884,9 @@ export default {
       this.filterByDate(null, null)
     },
     reloadCambioEquipo() {
-      this.getEquipo();
-      this.getEquipoAsignado();
-    }
+      this.getEquipo()
+      this.getEquipoAsignado()
+    },
   },
   watch: {
     optionsCertificados: {
@@ -842,7 +894,7 @@ export default {
         this.getTareasRealizadas()
       },
       deep: true,
-    }
+    },
   },
   mounted() {
     this.GET_NAME_INSTRUMENTO('Equipo')
@@ -850,22 +902,32 @@ export default {
     this.getRutas()
     this.getEquipo()
     this.getEquipoAsignado()
-    this.getTareasRealizadas();
+    this.getTareasRealizadas()
+    this.getImagen()
   },
 }
 </script>
 
 <style scoped>
+.input-file {
+  width: 100%;
+  height: 100%;
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
 .style-vencido {
-  background-color: rgb(215,215,44)
+  background-color: rgb(215, 215, 44);
 }
 
 .style-normal {
-  background-color: rgb(255,255,255)
+  background-color: rgb(255, 255, 255);
 }
 
 .img {
-  width: 245px;
+  width: 145px;
   height: 145px;
 }
 .input-file-wrap {
@@ -874,6 +936,7 @@ export default {
   background-size: 100% 100%;
   height: 145px;
   width: 245px;
+  max-width: 245px !important;
   overflow: hidden;
   position: relative;
   cursor: pointer;
@@ -905,7 +968,6 @@ export default {
     width: 100%;
     height: 195px;
   }
-  
 }
 
 /* .img_banner{
@@ -916,9 +978,8 @@ export default {
   background-color: slategrey;
 } */
 @media (min-width: 1500px) {
-  .is-flex{
+  .is-flex {
     display: flex;
-    
   }
 }
 </style>

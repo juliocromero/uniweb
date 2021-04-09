@@ -157,7 +157,6 @@ export default {
               
              this.calibracionTipo.push({ text: item.nombre , value: item.id}); ;
             }
-            console.log('Calibracion Tipo:', this.calibracionTipo);
           })
           } catch (error) {
             console.log(error)

@@ -6,28 +6,26 @@
           <v-col class="d-flex pb-0 pl-1">
             <div class="overline">Sectores</div>
             <v-spacer />
-            <agregar-sector @reloag="reloag" v-if="isRolUser" />
+            <agregar-sector @reloag="reloag" v-if="isRolUser"/>
           </v-col>
           <v-divider></v-divider>
           <div class="sectores-sider">
-            <v-treeview
-              rounded
-              hoverable
-              activatable
-              :active="itemsSelected"
-              :items="items"
-              item-key="id"
-              v-on:update:active="filtrarTabla"
-              style="cursor: pointer"
-            >
-              <template v-slot:append="{ item }" v-if="isRolUser">
-                <div class="delete-sector">
-                  <v-icon @click="DeleteSector(item)" class="borrar"
-                    >delete_forever</v-icon
-                  >
-                </div>
-              </template>
-            </v-treeview>
+              <v-treeview
+                rounded
+                hoverable
+                activatable
+                :active="itemsSelected"
+                :items="items"
+                item-key="id"
+                v-on:update:active="filtrarTabla"
+                style="cursor: pointer"
+              >
+                <template v-slot:append="{item}" v-if="isRolUser" >
+                  <div class="delete-sector">
+                <v-icon @click="DeleteSector(item)" class="borrar">delete_forever</v-icon>
+                  </div>
+                </template>
+              </v-treeview>
           </div>
         </v-col>
         <v-col cols="12" md="9">
@@ -74,8 +72,7 @@
                   >
                     Limpiar Filtros
                   </v-btn>
-
-                  <agregar-equipo @click="getDataTable" v-if="isRolUser" />
+                  <agregar-equipo @click="getDataTable" v-if="isRolUser"/>
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
@@ -113,8 +110,11 @@
               </template>
 
               <template v-slot:[`item.estadoName`]="{ item }">
-                <v-chip :color="setColorEstado(item)" text-color="white">
-                  {{ item.estadoName }}
+                <v-chip
+                :color="setColorEstado(item)"
+                text-color="white"
+                >
+                  {{item.estadoName}}
                 </v-chip>
               </template>
 
@@ -146,14 +146,8 @@
           </v-card>
         </v-col>
       </v-row>
-      <eliminar-sector
-        :sectorModal="sectorDeleteModal"
-        :sector="sectorDelete"
-        @input="closeModal"
-        @deleteOk="deleteOkSector"
-      />
+      <eliminar-sector :sectorModal="sectorDeleteModal" :sector="sectorDelete" @input="closeModal" @deleteOk="deleteOkSector"/>
     </v-container>
-    {{options}}
   </div>
 </template>
 
@@ -182,7 +176,7 @@ export default {
     EditarEquipo,
     DescargarCetificado,
     AgregarSector,
-    eliminarSector,
+    eliminarSector
   },
   data: () => ({
     sectorDelete: [],
@@ -210,7 +204,7 @@ export default {
       { text: 'Tag', align: 'start', value: 'tag' },
       { text: 'Descripción', value: 'descripcion', align: 'start' },
       { text: 'Sector', value: 'sectorName', align: 'center' },
-      { text: 'Estado', value: 'estadoName', align: 'center' },
+      { text: 'Estado', value: 'estadoName', align: 'center'},
       { text: 'Próxima', value: 'proximaCalib', align: 'center' },
       { text: 'Encargado', value: 'empresa', align: 'center' },
       { text: 'Acciones', value: 'acciones', sortable: false, align: 'center' },
@@ -223,12 +217,12 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? 'Nuevo' : 'Editar'
     },
-    isRolUser() {
-      if (this.rolUser == 0) {
+    isRolUser(){    
+      if(this.rolUser == 0){
         return true
       }
       return false
-    },
+    }
   },
   filters: {
     fecha(v) {
@@ -252,14 +246,15 @@ export default {
           return 'gray'
       }
     },
-    deleteOkSector() {
+    deleteOkSector(){
       this.fillItems()
     },
     closeModal() {
       this.sectorDeleteModal = false
     },
-    DeleteSector(item) {
-      ;(this.sectorDelete = item), (this.sectorDeleteModal = true)
+    DeleteSector(item){
+      this.sectorDelete = item,
+      this.sectorDeleteModal = true
     },
     reloag() {
       this.fillItems()
@@ -289,7 +284,6 @@ export default {
           },
         })
         .then((res) => {
-          console.log('resEquipoTabla:', res.data.tableItemsData)
           this.totalTableItems = res.data.total
           res.data.tableItemsData.forEach((it) => {
             var auxRuta = this.listRutas.find((el) => el.i == it.sector_id)
@@ -307,22 +301,21 @@ export default {
     },
     async downloadUltCert(id) {
       try {
-        await axios
-          .get('download/lastcert', {
-            headers: { Authorization: `Bearer ${this.token}` },
-            responseType: 'blob',
-            params: { id },
-          })
-          .then((response) => {
-            const content = response.headers['content-type']
+        await axios.get('download/lastcert',{
+          headers: { Authorization: `Bearer ${this.token}`},
+          responseType: 'blob',
+          params: { id }
+        }).then(response => {
+            const content = response.headers['content-type'];
             download(response.data, 'ultimo.pdf', content)
-          })
+        })
       } catch (error) {
         alert(await error.response.data.text())
       }
     },
     async filtrarTabla(id) {
       this.filtroTree = id
+      this.options.page = 1
       this.fillItems()
       this.getDataTable()
     },
@@ -345,6 +338,7 @@ export default {
     async filterByDate(desde, hasta) {
       this.desde = desde
       this.hasta = hasta
+      this.options.page = 1
       this.getDataTable()
     },
     closeDelete() {
@@ -365,13 +359,12 @@ export default {
     },
     async DescargaCSV() {
       let file = await this.archiveAll()
+     // console.log(file)
       if (file){
          await this.DownloadArchive(file)
       }
-     
-      
-    },
-    async archiveAll(){
+  },
+  async archiveAll(){
        this.loading = true
        let page = this.options;
        page.itemsPerPage = 'all'
@@ -431,6 +424,20 @@ export default {
     }
   },
   watch: {
+    listRutas: function (list) {
+      this.tableData = this.tableData.map((it) => {
+
+            var auxRuta = list.find((el) => el.i == it.sector_id)
+
+            if (auxRuta !== undefined) {
+              it.sectorName = auxRuta.ruta
+            } else {
+              it.sectorName = 'Error en ruta'
+            }
+
+            return it;
+          })
+    },
     options: {
       handler() {
         this.fillItems()
@@ -486,10 +493,10 @@ a {
 .txt-treview {
   margin-top: 15px;
 }
-.borrar:hover {
+.borrar:hover{
   color: red;
 }
-.delete-sector {
+.delete-sector{
   z-index: 20;
 }
 .sectores-sider {

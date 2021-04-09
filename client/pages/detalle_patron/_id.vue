@@ -440,7 +440,6 @@ export default {
           .then((res) => {
 
             this.item = res.data.data;
-            console.log(this.item)
             this.tareasCalibracion = this.item.tareaCalibracion;
 
             this.estadoText = this.item.estado;
@@ -545,7 +544,14 @@ export default {
     this.GET_NAME_INSTRUMENTO('Patrón')
     this.paramsId = this.$route.params.id
     this.getInstrumento();
-    //this.getTareasRealizadas();
+/*     if (this.$route.query.desde) {
+      this.desde = moment(this.$route.query.desde).format('YYYY-MM-DD')
+      this.hasta = moment(this.$route.query.desde).format('YYYY-MM-DD')
+      this.$refs.Filtro.date1 = this.desde
+      //this.getTareasRealizadas();
+    } */
+    
+    
   },
 }
 </script>

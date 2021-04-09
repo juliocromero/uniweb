@@ -53,7 +53,7 @@ import Cookies from 'js-cookie'
 export default {
     props: {
         sector: {
-            type: Object,
+            type: Array,
             default: () => {}
         },
         sectorModal:{
@@ -91,7 +91,6 @@ export default {
           await axios.delete(`sector/${this.inDeleteSector.id}`, 
           { headers: { Authorization: `Bearer ${this.token}` },})
             .then(res => {
-              console.log(res)
               this.closeModal()
               this.alertMsg = `Sector agregado exitosamente`;
               this.alertType = 'success';

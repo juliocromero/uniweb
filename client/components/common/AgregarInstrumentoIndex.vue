@@ -211,7 +211,7 @@ export default {
           this.instrumento.tipo_id = this.instrumentoTipo[this.instrumento.tipo_id];
           this.instrumento.unidad_id = this.instrumentoUnidad[this.instrumento.unidad_id];
           this.instrumento.magnitud_id = this.instrumentoUnidad[this.instrumento.magnitud_id];
-         // console.log('Instrumentoer:', this.instrumento);
+
           axios.post('instrumento', this.instrumento ,{
               headers: { Authorization: `Bearer ${this.token}` },
             })
@@ -242,7 +242,6 @@ export default {
             for (const item of res.data.data) {
               this.instrumentoTipo[item.nombre] = item.id ;
             }
-            //console.log('instrumento Tipo:', this.instrumentoTipo);
           })
           } catch (error) {
             console.log(error)
@@ -257,7 +256,6 @@ export default {
             for (const item of res.data.data) {
               this.instrumentoUnidad[item.nombre] = item.id ;
             }
-           // console.log('instrumento Unidad:', this.instrumentoUnidad);
           })
 
           } catch (error) {
@@ -274,7 +272,6 @@ export default {
         for (const item of res.data.data) {
           this.instrumentoMagnitud[item.nombre] = item.id ;
         }
-       // console.log('instrumento Magnitud:', this.instrumentoMagnitud);
       })
 
       } catch (error) {

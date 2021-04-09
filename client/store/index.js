@@ -26,15 +26,12 @@ export const mutations = {
     state.Equipos = val
   },
   async SET_AUTH(state, res) {
-    console.log('set auth',res)
     state.auth = true;  
     state.rolUser = res.user.rol
     Cookies.set('token', res.token)
     this.$router.push('/')
   },
   async SET_AUTH_AUTOMATIC(state, res) {
-
-    console.log('set auth automatic',res)
     state.rolUser = res.rol
     state.auth = true;
     this.$router.push('/')

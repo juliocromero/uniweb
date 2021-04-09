@@ -42,7 +42,6 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
-                  {{sector.ruta_id}}
                   <v-autocomplete
                     v-model="sector.ruta_id"
                     :items="sectores"
